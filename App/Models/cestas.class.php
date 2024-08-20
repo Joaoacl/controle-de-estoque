@@ -42,14 +42,9 @@
                   <!-- Emphasis label -->
                   
                   <!-- General tools such as edit or delete-->
-                  <div class="tools right ">
-                    
-                    <form class="right" name="editcesta'.$row['idcestaBasica'].'" action="editcesta.php" method="post">
-                      <input type="hidden" name="idcestaBasica" id="idcestaBasica" value="'.$row['idcestaBasica'].'">
-                      <a href="editcesta.php" type="button" onclick="this.form.submit();"><i class="fa fa-edit"></i></a></form>
-                    <form class="right" name="delcesta'.$row['idcestaBasica'].'" action="delcesta.php" method="post">
-                    <input type="hidden" name="idcestaBasica" id="idcestaBasica" value="'.$row['idcestaBasica'].'">
-                     <a href="#" type="button" onclick="this.form.submit();"><i class="fa fa-trash-o"></i></a></form>
+                  <div class="tools d-flex justify-content-around">
+                    <a href="editcesta.php?id='.$row['idcestaBasica'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
+                    <a class="btn btn-outline-danger btn-sm" title="Excluir"><i class="fa fa-trash-o fa-lg"></i></a>
                   </div>
                 </li>';
                  				
@@ -78,11 +73,13 @@
     if($row = mysqli_fetch_array($result)){
 
         $idcestaBasica = $row['idcestaBasica'];
+        $nomeCesta = $row['nome'];
         $descricao = $row['descricao'];
         $valor = $row['valor'];
         $categoriaCesta_idcategoriaCesta = $row['categoriaCesta_idcategoriaCesta'];
         
        return $resp = array('Cestas' => ['idcestaBasica' => $idcestaBasica,
+                      'nome' => $nomeCesta,
                       'descricao'   => $descricao,
                       'valor' => $valor,
                       'categoriaCesta_idcategoriaCesta' => $categoriaCesta_idcategoriaCesta]);  

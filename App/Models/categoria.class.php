@@ -31,9 +31,9 @@
                   <!-- Emphasis label -->
                   <!-- <small class="label label-danger"><i class="fa fa-clock-o"></i> 2 mins</small> -->
                   <!-- General tools such as edit or delete-->
-                  <div class="tools">
-                    <a href="editcategoria.php?id='.$row['idcategoriaCesta'].'"><i class="fa fa-edit"></i></a>
-                    <i class="fa fa-trash-o"></i>
+                 <div class="tools d-flex justify-content-around">
+                    <a href="editcategoria.php?id='.$row['idcategoriaCesta'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
+                    <a class="btn btn-outline-danger btn-sm" title="Excluir"><i class="fa fa-trash-o fa-lg"></i></a>
                   </div>
                 </li>';
                  				
