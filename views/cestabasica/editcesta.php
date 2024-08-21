@@ -2,6 +2,9 @@
 require_once '../../App/auth.php';
 require_once '../../layout/script.php';
 require_once '../../App/Models/cestas.class.php';
+require_once '../../App/Models/categoria.class.php';
+
+
 
 echo $head;
 echo $header;
@@ -11,11 +14,11 @@ echo '<div class="content-wrapper">';
 echo '<!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Editar <small>Categoria</small>
+        Editar <small>Cesta</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="../"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Editar Categoria</li>
+        <li class="active">Editar Cesta</li>
       </ol>
     </section>
 
@@ -38,7 +41,7 @@ echo'
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header with-border">
-              <h3 class="box-title">Categoria</h3>
+              <h3 class="box-title">Cesta Básica</h3>
             </div>
             <!-- /.box-header -->
             <!-- form start -->
@@ -56,10 +59,14 @@ echo'
                   <input type="text" name="valor" class="form-control" id="exampleInputEmail1" placeholder="R$" value="'.$resp['Cestas']['valor'].'">
 
                   <label for="exampleInputEmail1">Categoria Cesta</label>
-                  <input type="text" name="categoria" class="form-control" id="exampleInputEmail1" placeholder="Categoria" value="'.$resp['Cestas']['categoriaCesta_idcategoriaCesta'].'">
+                  <select name="codCesta" class="form-control" id="categoria">';
 
+                  $categorias->listCategorias($resp['Cestas']['categoriaCesta_idcategoriaCesta']);
+
+echo            '
+                </select>
                 </div>
-                <input type="hidden" name="idcategoriaCesta" value="'.$idcestaBasica.'">
+                <input type="hidden" name="idcestaBasica" value="'.$idcestaBasica.'">
                  <input type="hidden" name="iduser" value="'.$idUsuario.'">
               <!-- /.box-body -->
 

@@ -87,19 +87,19 @@
     
   }
 
-  public function updateCestas($nomeCesta, $descricao, $valor, $categoriaCesta_idcategoriaCesta)
+  public function updateCestas($idcestaBasica, $nomeCesta, $descricao, $valor, $categoriaCesta_idcategoriaCesta)
   {
     $query = "UPDATE `cestabasica` SET 
-                    `descricao`= '$descricao',
-                    `valor`='$valor',
-                    `categoriaCesta_idcategoriaCesta`='$categoriaCesta_idcategoriaCesta'
-                    WHERE `idcestaBasica`= '$idcestaBasica'";
+                `nome`= '$nomeCesta',
+                `descricao`= '$descricao',
+                `valor`= '$valor',
+                `categoriaCesta_idcategoriaCesta`= '$categoriaCesta_idcategoriaCesta'
+              WHERE `idcestaBasica`= '$idcestaBasica'";
 
-    if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
-
-      header('Location: ../../views/cestabasica/index.php?alert=1');
-    }else{
-      header('Location: ../../views/cestabasica/index.php?alert=0');
+    if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))) {
+        header('Location: ../../views/cestabasica/index.php?alert=1');
+    } else {
+        header('Location: ../../views/cestabasica/index.php?alert=0');
     }
 
   }
