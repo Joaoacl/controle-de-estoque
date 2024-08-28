@@ -11,7 +11,9 @@
  	
  	public function index()
  	{
- 		$query = "SELECT *FROM `cestabasica`";
+ 		$query = "SELECT c.idcestaBasica, c.nome AS nome_cesta, c.descricao, c.valor, c.ativo, cat.nome AS nome_categoria 
+              FROM `cestabasica` c
+              JOIN `categoriaCesta` cat ON c.categoriaCesta_idcategoriaCesta = cat.idcategoriaCesta";
  		$result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
 
  		if($result){
@@ -33,10 +35,10 @@
                    if($row['ativo'] == 1){ echo 'checked'; } 
                   echo ' value="'.$row['ativo'].'" onclick="this.form.submit();"></form>
                   <!-- todo text -->
-                  <span class="badge left ">'.$row['nome'].'</span> </span> 
-                  '.$row['descricao'].'
-                  - R$'.$row['valor'].'  
-                  - '.$row['categoriaCesta_idcategoriaCesta'].'                      
+                  <span class="badge left text">'.$row['nome_cesta'].'</span> </span> 
+                  | '.$row['descricao'].'
+                  | VALOR: <strong>R$' . $row['valor'] . '</strong> 
+                  | CATEGORIA: <strong>'.$row['nome_categoria'].'</strong>                      
                   </span>
 
                   <!-- Emphasis label -->
@@ -44,7 +46,7 @@
                   <!-- General tools such as edit or delete-->
                   <div class="tools d-flex justify-content-around">
                     <a href="editcesta.php?id='.$row['idcestaBasica'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
-                    <a class="btn btn-outline-danger btn-sm" title="Excluir"><i class="fa fa-trash-o fa-lg"></i></a>
+                    <a href="deletecesta.php?id='.$row['idcestaBasica'].'" class="btn btn-outline-danger btn-sm" title="Excluir"><i class="fa fa-trash-o fa-lg"></i></a>
                   </div>
                 </li>';
                  				
@@ -102,6 +104,20 @@
         header('Location: ../../views/cestabasica/index.php?alert=0');
     }
 
+  }
+
+  public function deleteCestas($idcestaBasica)
+  {
+    $query = "DELETE FROM `cestabasica` WHERE `idcestaBasica` = '$idcestaBasica'";
+    $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+
+    if ($result) {
+        // Item deletado com sucesso
+        return true;
+    } else {
+        // Falha ao deletar item
+        return false;
+    }
   }
 
   /*

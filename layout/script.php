@@ -241,10 +241,9 @@ $aside = '<aside class="main-sidebar">
   $footer = '<!-- /.content-wrapper -->
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      <b>Version</b> 2.3.8
+      <b>Version</b> beta
     </div>
-    <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
-    reserved.
+    <strong>CB Alimentos para a vida</strong>
   </footer>
 
   <!-- Control Sidebar -->
