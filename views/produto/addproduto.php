@@ -1,7 +1,6 @@
 <?php
 require_once '../../App/auth.php';
 require_once '../../layout/script.php';
-require_once '../../App/Models/categoria.class.php';
 require_once '../../App/Models/produto.class.php';
 
 echo $head;
@@ -11,11 +10,11 @@ echo '<div class="content-wrapper">';
 echo '<!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Adicionar <small>Cesta Básica</small>
+        Adicionar <small>Produto</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="../"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Add Cesta Básica</li>
+        <li class="active">Add Produto</li>
       </ol>
     </section>
 
@@ -31,45 +30,33 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header with-border">
-              <h3 class="box-title">Cesta Básica</h3>
+              <h3 class="box-title">Produto</h3>
             </div>
             <!-- /.box-header -->
 
             <!-- form start -->
-            <form role="form" action="../../App/Database/insertcesta.php" method="POST">
+            <form role="form" action="../../App/Database/insertprod.php" method="POST">
               <div class="box-body">
 
                  <div class="form-group">
-                  <label for="exampleInputEmail1">Nome Cesta</label>
-                  <input type="text" name="nomecesta" class="form-control" id="exampleInputEmail1" placeholder="Nome Cesta">
+                  <label for="exampleInputEmail1">Nome Produto</label>
+                  <input type="text" name="nomeproduto" class="form-control" id="exampleInputEmail1" placeholder="Nome Produto">
                 </div>
 
                  <div class="form-group">
                   <label for="exampleInputEmail1">Descrição</label>
-                  <input type="text" name="descricao" class="form-control" id="exampleInputEmail1" placeholder="Breve Descrição...">
+                  <input type="text" name="descricaoproduto" class="form-control" id="exampleInputEmail1" placeholder="Breve Descrição...">
                 </div>
 
                  <div class="form-group">
                   <label for="exampleInputEmail1">Valor</label>
-                  <input type="text" name="valor" class="form-control" id="exampleInputEmail1" placeholder="R$">
+                  <input type="text" name="valorproduto" class="form-control" id="exampleInputEmail1" placeholder="R$">
                 </div>
 
-                <div class="form-group">
-                  <label for="exampleInputEmail1">Categoria Cesta</label>
-
-                    <select class="form-control" name="codCesta">
-                    ';
-                    $categorias->listCategorias();
-                    echo '</select>
+                 <div class="form-group">
+                  <label for="exampleInputEmail1">Quantidade</label>
+                  <input type="text" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Quantidade">
                 </div>
-
-                <div class="form-group">
-                  <label for="produtos">Produtos da Cesta (Selecione os produtos que compõem essa cesta)</label>
-                    ';
-                    $produtos->listProdutosCheckbox();
-                    echo '
-                </div>
-
 
 
                 <input type="hidden" name="iduser" value="'.$idUsuario.'">
@@ -79,7 +66,7 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
 
               <div class="box-footer">
                 <button type="submit" name="upload" class="btn btn-primary" value="Cadastrar">Cadastrar</button>
-                <a class="btn btn-danger" href="../../views/cestabasica">Cancelar</a>
+                <a class="btn btn-danger" href="../../views/produto">Cancelar</a>
               </div>
             </form>
           </div>

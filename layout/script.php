@@ -209,6 +209,19 @@ $aside = '<aside class="main-sidebar">
         </li>
         <li class="treeview">
           <a href="#">
+            <i class="fa fa-th-large"></i> <span>Produtos</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="'.$url.'produto/"><i class="fa fa-th-list"></i> Lista de Produtos</a></li>
+            <li><a href="'.$url.'produto/addproduto.php"><i class="fa fa-plus"></i> Add Produtos</a></li>
+            
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#">
             <i class="fa fa-truck"></i> <span>Fornecedores</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>

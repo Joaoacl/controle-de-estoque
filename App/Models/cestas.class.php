@@ -27,7 +27,7 @@
                       </span>
                   <span class="text">
                   <!-- checkbox -->
-                  <form class="badge" name="ativ'.$row['idcestaBasica'].'" action="action.php" method="post">
+                  <form class="text" name="ativ'.$row['idcestaBasica'].'" action="action.php" method="post">
                   <input type="hidden" name="id" id="id" value="'.$row['idcestaBasica'].'">
 
                   <input type="hidden" name="status" id="status" value="'.$row['ativo'].'">
@@ -60,12 +60,19 @@
 
  		$query = "INSERT INTO `cestabasica`(`idcestaBasica`, `nome`, `descricao`, `valor`, `categoriaCesta_idcategoriaCesta`) VALUES (NULL, '$nomeCesta','$descricao', '$valor', '$categoriaCesta_idcategoriaCesta')";
  		if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
-
+      return mysqli_insert_id($this->SQL);
  			header('Location: ../../views/cestabasica/index.php?alert=1');
  		}else{
  			header('Location: ../../views/cestabasica/index.php?alert=0');
  		}
  	}//InsertItens
+
+   public function insertProdutoNaCesta($idcestaBasica, $idProduto)
+   {
+       $query = "INSERT INTO `cestabasica_has_produto` (`cestaBasica_idcestaBasica`, `produto_idproduto`, `quantidade`) VALUES ('$idcestaBasica', '$idProduto', 1)";
+       mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+   }
+   
 
   public function editCestas($value)
   {
@@ -108,6 +115,9 @@
 
   public function deleteCestas($idcestaBasica)
   {
+    $queryDeleteProdutos = "DELETE FROM `cestabasica_has_produto` WHERE `cestaBasica_idcestaBasica` = '$idcestaBasica'";
+    mysqli_query($this->SQL, $queryDeleteProdutos) or die(mysqli_error($this->SQL));
+
     $query = "DELETE FROM `cestabasica` WHERE `idcestaBasica` = '$idcestaBasica'";
     $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 
