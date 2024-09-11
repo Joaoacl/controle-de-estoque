@@ -19,7 +19,7 @@ if($nomeCesta != NULL){
 if(isset($_POST['idcestaBasica'])){
 
 	$idcestaBasica = $_POST['idcestaBasica'];
-	$cestas->updateCestas($idcestaBasica, $nomeCesta, $descricao, $valor, $categoriaCesta_idcategoriaCesta);
+	$cestas->updateCestas($idcestaBasica, $nomeCesta, $descricao, $valor, $categoriaCesta_idcategoriaCesta, $produtos);
 
 }else{
 

@@ -3,7 +3,7 @@ require_once '../../App/auth.php';
 require_once '../../layout/script.php';
 require_once '../../App/Models/cestas.class.php';
 require_once '../../App/Models/categoria.class.php';
-
+require_once '../../App/Models/produto.class.php';
 
 
 echo $head;
@@ -35,6 +35,7 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
         if(isset($_GET['id'])){
             $idcestaBasica = $_GET['id'];
             $resp = $cestas->editCestas($idcestaBasica);
+            $produtosSelecionados = $produtos->getProdutosPorCesta($idcestaBasica);
 
 echo'
         <div class="col-md-6">
@@ -65,6 +66,11 @@ echo'
 
 echo            '
                 </select>
+                </div>
+                <div class="form-group">
+                  <label for="produtos">Produtos da Cesta (Selecione os produtos que compõem essa cesta)</label>';
+                    $produtos->listProdutosCheckbox($produtosSelecionados);
+echo            '
                 </div>
                 <input type="hidden" name="idcestaBasica" value="'.$idcestaBasica.'">
                  <input type="hidden" name="iduser" value="'.$idUsuario.'">

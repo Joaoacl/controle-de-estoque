@@ -4,10 +4,10 @@
  Class produtos
 */
 
- require_once 'connect.php';
+require_once 'connect.php';
 
-  class Produtos extends Connect
- {
+class Produtos extends Connect
+{
  	
  	public function index()
  	{
@@ -67,6 +67,18 @@
         }
     }
 
+	public function getProdutosPorCesta($idcestaBasica)
+	{
+    $produtos = [];
+    $query = "SELECT produto_idproduto FROM `cestabasica_has_produto` WHERE `cestaBasica_idcestaBasica` = '$idcestaBasica'";
+    $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $produtos[] = $row['produto_idproduto'];
+    }
+
+    return $produtos; 
+	}
  	public function InsertProdutos($nomeProduto, $descricao, $valor, $quantidade){
 
  		$query = "INSERT INTO `produto`(`idproduto`, `nome`, `valor`, `quantidade`, `descricao`, `ativo`) VALUES (NULL,'$nomeProduto', '$valor', '$quantidade', '$descricao', '1')";
@@ -80,13 +92,16 @@
 
  	}
 
-	public function editCategoria($idcategoriaCesta){
-		$query = "SELECT *FROM `categoriacesta` WHERE `idcategoriaCesta` = '$idcategoriaCesta'";
+	public function editProduto($idproduto){
+		$query = "SELECT *FROM `produto` WHERE `idproduto` = '$idproduto'";
  		if($result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL))){
 
 			if($row = mysqli_fetch_array($result)){
-				$nomeCategoria = $row['nome'];
-				$array = array('Categoria'=> [ 'nome' => $nomeCategoria ]);
+				$nomeProduto = $row['nome'];
+				$valor = $row['valor'];
+				$quantidade = $row['quantidade'];
+				$descricao = $row['descricao'];
+				$array = array('Produto'=> [ 'nome' => $nomeProduto, 'valor' => $valor, 'quantidade' => $quantidade, 'descricao' => $descricao]);
 				
 				return $array;
 			}
@@ -95,23 +110,23 @@
 		}
 	}
 
-	public function updateCategoria($idcategoriaCesta, $nomeCategoria){
-		$query = "UPDATE `categoriacesta` SET `nome` = '$nomeCategoria' WHERE `idcategoriaCesta` = '$idcategoriaCesta'";
+	public function updateProduto($idproduto, $nomeProduto, $valor, $quantidade, $descricao){
+		$query = "UPDATE `produto` SET `nome` = '$nomeProduto', `valor` = '$valor', `quantidade` = '$quantidade', `descricao` = '$descricao' WHERE `idproduto` = '$idproduto'";
     	$result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 
     if ($result) {
-        header('Location: ../../views/categoria/index.php?alert=1');
+        header('Location: ../../views/produto/index.php?alert=1');
     } else {
-        header('Location: ../../views/categoria/index.php?alert=0');
+        header('Location: ../../views/produto/index.php?alert=0');
     }
 	}
 	
 
-	public function deleteCategoria($idcategoriaCesta){
-		if(mysqli_query($this->SQL, "DELETE FROM `categoriacesta` WHERE `idcategoriaCesta` = '$idcategoriaCesta'") or die ( mysqli_error($this->SQL))){
-			header('Location: ../../views/categoria/index.php?alert=1');
+	public function deleteProduto($idproduto){
+		if(mysqli_query($this->SQL, "DELETE FROM `produto` WHERE `idproduto` = '$idproduto'") or die ( mysqli_error($this->SQL))){
+			header('Location: ../../views/produto/index.php?alert=1');
 		} else {
-			header('Location: ../../views/categoria/index.php?alert=0');
+			header('Location: ../../views/produto/index.php?alert=0');
 		}
 		
 	}
@@ -127,6 +142,6 @@
 	  header('Location: ../../views/produto/');
 	}
 
- }
+}
 
  $produtos = new Produtos;
