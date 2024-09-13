@@ -35,27 +35,23 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
             <!-- /.box-header -->
 
             <!-- form start -->
-            <form role="form" action="../../App/Database/insertprod.php" method="POST">
+            <form role="form" action="../../App/Database/insertprod.php" method="POST" onsubmit="removerEspacos()">
               <div class="box-body">
-
-                 <div class="form-group">
+   
                   <label for="exampleInputEmail1">Nome Produto</label>
-                  <input type="text" name="nomeproduto" class="form-control" id="exampleInputEmail1" placeholder="Nome Produto">
-                </div>
-
-                 <div class="form-group">
+                  <input type="text" name="nomeproduto" class="form-control" id="exampleInputEmail1" placeholder="Nome Produto" maxlength="45">
+                
+                  
                   <label for="exampleInputEmail1">Descrição</label>
-                  <input type="text" name="descricaoproduto" class="form-control" id="exampleInputEmail1" placeholder="Breve Descrição...">
-                </div>
-
-                 <div class="form-group">
+                  <input type="text" name="descricaoproduto" class="form-control" id="exampleInputEmail1" placeholder="Breve Descrição..." maxlength="45">
+             
+                  
                   <label for="exampleInputEmail1">Valor</label>
-                  <input type="text" name="valorproduto" class="form-control" id="exampleInputEmail1" placeholder="R$">
-                </div>
+                  <input type="text" name="valorproduto" class="form-control" id="exampleInputEmail1" placeholder="R$" oninput="mascaraValor(this)">
+                
 
-                 <div class="form-group">
                   <label for="exampleInputEmail1">Quantidade</label>
-                  <input type="text" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Quantidade">
+                  <input type="number" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Quantidade" min="1" oninput="validarQuantidade(this)" onchange="validarQuantidadeFinal(this)">
                 </div>
 
 
@@ -74,6 +70,7 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
           </div>
 </div>';
 
+
 echo '</div>';
 echo '</div>';
 echo '</section>';
@@ -81,3 +78,20 @@ echo '</div>';
 echo  $footer;
 echo $javascript;
 ?>
+
+<script>
+function validarQuantidade(input) {
+    // Garante que o valor sempre seja positivo enquanto digita
+    if (input.value < 0) {
+        input.value = Math.abs(input.value);
+    }
+}
+
+function validarQuantidadeFinal(input) {
+    // Corrige o valor final para 0 se estiver em branco ou negativo ao sair do campo
+    if (input.value === "" || input.value < 0) {
+        input.value = 1;
+        alert("A quantidade não pode ser negativa ou vazia.");
+    }
+}
+</script>

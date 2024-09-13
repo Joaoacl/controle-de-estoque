@@ -51,10 +51,10 @@ echo'
                 <div class="form-group">
 
                   <label for="exampleInputEmail1">Nome da Cesta</label>
-                  <input type="text" name="nomecesta" class="form-control" id="exampleInputEmail1" placeholder="Nome Cesta" value="'.$resp['Cestas']['nome'].'">
+                  <input type="text" name="nomecesta" class="form-control" id="exampleInputEmail1" placeholder="Nome Cesta" value="'.$resp['Cestas']['nome'].'" maxlength="45">
                 
                   <label for="exampleInputEmail1">Descrição</label>
-                  <input type="text" name="descricao" class="form-control" id="exampleInputEmail1" placeholder="Descrição" value="'.$resp['Cestas']['descricao'].'">
+                  <input type="text" name="descricao" class="form-control" id="exampleInputEmail1" placeholder="Descrição" value="'.$resp['Cestas']['descricao'].'" maxlength="45">
 
                   <label for="exampleInputEmail1">Valor</label>
                   <input type="text" name="valor" class="form-control" id="exampleInputEmail1" placeholder="R$" value="'.$resp['Cestas']['valor'].'">

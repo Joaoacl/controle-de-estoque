@@ -484,6 +484,7 @@ $javascript = '
 <script src="'.$url.'plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
 <!-- Slimscroll -->
 <script src="'.$url.'plugins/slimScroll/jquery.slimscroll.min.js"></script>
+
 <!-- FastClick -->
 <script src="'.$url.'plugins/fastclick/fastclick.js"></script>
 <!-- AdminLTE App -->
@@ -492,7 +493,35 @@ $javascript = '
 <script src="'.$url.'dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="'.$url.'dist/js/demo.js"></script>
+
+
 </body>
 </html>';
 
 ?>
+
+<script>
+function mascaraValor(input) {
+  let value = input.value;
+  
+  // Remove tudo que não for dígito
+  value = value.replace(/\D/g, "");
+
+  // Adiciona a vírgula e os pontos conforme o valor cresce
+  value = (value / 100).toFixed(2) + "";
+  value = value.replace(".", ",");
+  value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+
+  // Atualiza o valor do input com a máscara de moeda
+  input.value = "R$ " + value;
+}
+
+function removerEspacos() {
+    // Seleciona todos os inputs de texto
+    var inputs = document.querySelectorAll('input[type="text"]');
+    inputs.forEach(function(input) {
+        input.value = input.value.trim(); // Remove os espaços em branco no início e no final
+    });
+}
+
+</script>

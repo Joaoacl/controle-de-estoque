@@ -46,7 +46,7 @@ echo'
               <div class="box-body">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Nome da Categoria</label>
-                  <input type="text" name="nomecategoria" class="form-control" id="exampleInputEmail1" placeholder="Nome Categoria" value="'.$resp['Categoria']['nome'].'">
+                  <input type="text" name="nomecategoria" class="form-control" id="exampleInputEmail1" placeholder="Nome Categoria" value="'.$resp['Categoria']['nome'].'" maxlength="45">
                 </div>
                 <input type="hidden" name="idcategoriaCesta" value="'.$idcategoriaCesta.'">
                  <input type="hidden" name="iduser" value="'.$idUsuario.'">

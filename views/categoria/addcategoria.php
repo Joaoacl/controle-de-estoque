@@ -37,7 +37,7 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
               <div class="box-body">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Nome da Categoria</label>
-                  <input type="text" name="nomecategoria" class="form-control" id="exampleInputEmail1" placeholder="Nome Categoria">
+                  <input type="text" name="nomecategoria" class="form-control" id="exampleInputEmail1" placeholder="Nome Categoria" maxlength="45">
                 </div>
                  <input type="hidden" name="iduser" value="'.$idUsuario.'">
               <!-- /.box-body -->

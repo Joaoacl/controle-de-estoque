@@ -4,8 +4,8 @@ require_once '../Models/produto.class.php';
 
 if (isset($_POST['upload']) && $_POST['upload'] == 'Cadastrar') {
     
-    $nomeProduto = $_POST['nomeproduto'];
-    $descricao = $_POST['descricaoproduto'];
+    $nomeProduto = trim($_POST['nomeproduto']);
+    $descricao = trim($_POST['descricaoproduto']);
     $valor = $_POST['valorproduto'];
     $quantidade = $_POST['quantidadeproduto'];
     

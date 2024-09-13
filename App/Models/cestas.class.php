@@ -57,6 +57,8 @@
  	}
 
  	public function InsertCestas($nomeCesta, $descricao, $valor, $categoriaCesta_idcategoriaCesta){
+    
+    $valor = str_replace(',', '.', $valor);
 
  		$query = "INSERT INTO `cestabasica`(`idcestaBasica`, `nome`, `descricao`, `valor`, `categoriaCesta_idcategoriaCesta`) VALUES (NULL, '$nomeCesta','$descricao', '$valor', '$categoriaCesta_idcategoriaCesta')";
  		if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){

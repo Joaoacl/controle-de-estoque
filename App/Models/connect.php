@@ -26,7 +26,7 @@ class Connect
 	function login($username, $password)
 	{
 
-		$query  = "SELECT * FROM `usuario` WHERE `nome` = '$username'";
+		$query  = "SELECT * FROM `usuario` WHERE `email` = '$username'";
 		$result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 		$total  = mysqli_num_rows($result);
 

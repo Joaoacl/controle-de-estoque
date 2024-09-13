@@ -79,8 +79,11 @@ class Produtos extends Connect
 
     return $produtos; 
 	}
+	
  	public function InsertProdutos($nomeProduto, $descricao, $valor, $quantidade){
 
+		$valor = str_replace(',', '.', $valor);
+		
  		$query = "INSERT INTO `produto`(`idproduto`, `nome`, `valor`, `quantidade`, `descricao`, `ativo`) VALUES (NULL,'$nomeProduto', '$valor', '$quantidade', '$descricao', '1')";
  		if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
 

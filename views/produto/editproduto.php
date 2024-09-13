@@ -42,20 +42,22 @@ echo'
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form role="form" action="../../App/Database/insertprod.php" method="POST">
+            <form role="form" action="../../App/Database/insertprod.php" method="POST" onsubmit="removerEspacos()">
               <div class="box-body">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Nome do Produto</label>
-                  <input type="text" name="nomeproduto" class="form-control" id="exampleInputEmail1" placeholder="Nome Produto" value="'.$resp['Produto']['nome'].'">
+                  <input type="text" name="nomeproduto" class="form-control" id="exampleInputEmail1" placeholder="Nome Produto" value="'.$resp['Produto']['nome'].'" maxlength="45">
+
+                  <label for="exampleInputEmail1">Descrição</label>
+                  <input type="text" name="descricaoproduto" class="form-control" id="exampleInputEmail1" placeholder="Descrição..." value="'.$resp['Produto']['descricao'].'" maxlength="45">
 
                   <label for="exampleInputEmail1">Valor</label>
                   <input type="text" name="valorproduto" class="form-control" id="exampleInputEmail1" placeholder="R$" value="'.$resp['Produto']['valor'].'">
 
                   <label for="exampleInputEmail1">Quantidade</label>
-                  <input type="text" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Qtd" value="'.$resp['Produto']['quantidade'].'">
+                  <input type="number" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Qtd" value="'.$resp['Produto']['quantidade'].'" oninput="validarQuantidade(this)" onchange="validarQuantidadeFinal(this)">
 
-                  <label for="exampleInputEmail1">Descrição</label>
-                  <input type="text" name="descricaoproduto" class="form-control" id="exampleInputEmail1" placeholder="Descrição..." value="'.$resp['Produto']['descricao'].'">
+                
                 </div>
                 <input type="hidden" name="idproduto" value="'.$idproduto.'">
                  <input type="hidden" name="iduser" value="'.$idUsuario.'">

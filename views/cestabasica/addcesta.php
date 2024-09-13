@@ -36,22 +36,22 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
             <!-- /.box-header -->
 
             <!-- form start -->
-            <form role="form" action="../../App/Database/insertcesta.php" method="POST">
+            <form role="form" action="../../App/Database/insertcesta.php" method="POST" onsubmit="removerEspacos()">
               <div class="box-body">
 
                  <div class="form-group">
                   <label for="exampleInputEmail1">Nome Cesta</label>
-                  <input type="text" name="nomecesta" class="form-control" id="exampleInputEmail1" placeholder="Nome Cesta">
+                  <input type="text" name="nomecesta" class="form-control" id="exampleInputEmail1" placeholder="Nome Cesta" maxlength="45">
                 </div>
 
                  <div class="form-group">
                   <label for="exampleInputEmail1">Descrição</label>
-                  <input type="text" name="descricao" class="form-control" id="exampleInputEmail1" placeholder="Breve Descrição...">
+                  <input type="text" name="descricao" class="form-control" id="exampleInputEmail1" placeholder="Breve Descrição..." maxlength="45">
                 </div>
 
                  <div class="form-group">
                   <label for="exampleInputEmail1">Valor</label>
-                  <input type="text" name="valor" class="form-control" id="exampleInputEmail1" placeholder="R$">
+                  <input type="text" name="valor" class="form-control" id="exampleInputEmail1" placeholder="R$" oninput="mascaraValor(this)">
                 </div>
 
                 <div class="form-group">
