@@ -50,7 +50,7 @@ echo '<div class="content-wrapper">
             </div>
             <!-- /.box-body -->
             <div class="box-footer clearfix no-border">
-              <a href="'.$url.'cestabasica/addcesta.php" type="button" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Add Cestas</a>
+              <a href="'.$url.'cestabasica/addcesta.php" type="button" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add Cestas</a>
             </div>
           </div>
 	 

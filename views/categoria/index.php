@@ -50,7 +50,7 @@ echo '<div class="content-wrapper">
             </div>
             <!-- /.box-body -->
             <div class="box-footer clearfix no-border">
-              <a href="addcategoria.php" type="button" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Add Categoria</a>
+              <a href="addcategoria.php" type="button" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add Categoria</a>
             </div>
           </div>
 	 
