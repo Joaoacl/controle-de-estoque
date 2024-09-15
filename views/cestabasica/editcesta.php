@@ -25,7 +25,7 @@ echo '<!-- Content Header (Page header) -->
     <!-- Main content -->
     <section class="content">
       <!-- Small boxes (Stat box) -->
-      <div class="row">';
+      <div class="">';
 
 echo ' <a href="./" class="btn btn-success">Voltar</a>
       <div class="row">
@@ -46,7 +46,7 @@ echo'
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form role="form" action="../../App/Database/insertcesta.php" method="POST">
+            <form role="form" action="../../App/Database/insertcesta.php" method="POST" onsubmit="removerEspacos()">
               <div class="box-body">
                 <div class="form-group">
 
@@ -64,10 +64,16 @@ echo'
 
                   $categorias->listCategorias($resp['Cestas']['categoriaCesta_idcategoriaCesta']);
 
-echo            '
-                </select>
+echo            '</select>
+
+                <label for="ativo">Status da Cesta</label>
+                  <select name="ativo" class="form-control" id="ativo">
+                    <option value="1" ' . ($resp['Cestas']['ativo'] == 1 ? 'selected' : '') . '>Ativo</option>
+                    <option value="0" ' . ($resp['Cestas']['ativo'] == 0 ? 'selected' : '') . '>Inativo</option>
+                  </select>
+
                 </div>
-                <div class="form-group">
+                <div class="form-group ">
                   <label for="produtos">Produtos da Cesta (Selecione os produtos que compõem essa cesta)</label>';
                     $produtos->listProdutosCheckbox($produtosSelecionados);
 echo            '

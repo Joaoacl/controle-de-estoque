@@ -22,7 +22,7 @@ echo '<!-- Content Header (Page header) -->
     <!-- Main content -->
     <section class="content">
       <!-- Small boxes (Stat box) -->
-      <div class="row">';
+      <div class="">';
 
 echo ' <a href="./" class="btn btn-success">Voltar</a>
       <div class="row">
@@ -56,6 +56,12 @@ echo'
 
                   <label for="exampleInputEmail1">Quantidade</label>
                   <input type="number" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Qtd" value="'.$resp['Produto']['quantidade'].'" oninput="validarQuantidade(this)" onchange="validarQuantidadeFinal(this)">
+
+                 <label for="ativo">Status do Produto</label>
+                  <select name="ativo" class="form-control" id="ativo">
+                    <option value="1" ' . ($resp['Produto']['ativo'] == 1 ? 'selected' : '') . '>Ativo</option>
+                    <option value="0" ' . ($resp['Produto']['ativo'] == 0 ? 'selected' : '') . '>Inativo</option>
+                  </select>
 
                 
                 </div>

@@ -47,7 +47,16 @@ echo'
                 <div class="form-group">
                   <label for="exampleInputEmail1">Nome da Categoria</label>
                   <input type="text" name="nomecategoria" class="form-control" id="exampleInputEmail1" placeholder="Nome Categoria" value="'.$resp['Categoria']['nome'].'" maxlength="45">
+
+                  <label for="ativo">Status da Cesta</label>
+                  <select name="ativo" class="form-control" id="ativo">
+                    <option value="1" ' . ($resp['Categoria']['ativo'] == 1 ? 'selected' : '') . '>Ativo</option>
+                    <option value="0" ' . ($resp['Categoria']['ativo'] == 0 ? 'selected' : '') . '>Inativo</option>
+                  </select>
+
                 </div>
+
+
                 <input type="hidden" name="idcategoriaCesta" value="'.$idcategoriaCesta.'">
                  <input type="hidden" name="iduser" value="'.$idUsuario.'">
               <!-- /.box-body -->

@@ -44,13 +44,37 @@ echo '<div class="content-wrapper">
             <!-- /.box-header -->
             <div class="box-body">
               <ul class="todo-list">';
-               $produtos->index();
+              if(isset($_POST['public']) != NULL){               
+
+                $value = $_POST['public']; 
+                if($value == 1){
+                 
+                  $public = 0;
+                  $button_name = "Inativos";
+                  $icon = "fa-times";
+      
+                }else{
+                  $public = 1;
+                  $button_name = "Publicados";
+                  $icon = "fa-check";
+                }     
+      
+              }else{
+                $value = 1;
+                $public = 0;
+                $button_name = "Inativos";
+              }
+                     $produtos->index($value);
               
         echo '</ul>
             </div>
             <!-- /.box-body -->
             <div class="box-footer clearfix no-border">
-              <a href="addproduto.php" type="button" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Add Produto</a>
+            <a href="addproduto.php" type="button" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add Produto</a>
+            <form action="index.php" method="post">
+            <button name="public" type="submit" value="'.$public.'" class="btn btn-default pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button></form>
+
+           
             </div>
           </div>
 	 

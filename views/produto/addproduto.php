@@ -21,7 +21,7 @@ echo '<!-- Content Header (Page header) -->
     <!-- Main content -->
     <section class="content">
       <!-- Small boxes (Stat box) -->
-      <div class="row">';
+      <div class="">';
 
 echo ' <a href="./" class="btn btn-success">Voltar</a>
       <div class="row">
