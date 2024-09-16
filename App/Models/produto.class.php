@@ -32,7 +32,7 @@ class Produtos extends Connect
                   
                   <!-- todo text -->
                   <span class="text"> '.$row['nome'].'</span>
-                  -<span class="text">R$'.$row['valor'].'</span>
+                  -<span class="text">'.$row['valor'].'</span>
                   <span class="text">| Qtd: '.$row['quantidade'].'</span>
 				   <span class="text">| Descrição: '.$row['descricao'].'</span>
 
