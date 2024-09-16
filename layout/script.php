@@ -190,7 +190,7 @@ $aside = '<aside class="main-sidebar">
           </a>
           <ul class="treeview-menu">
 
-            <li><a href="'.$url.'cestabasica/"><i class="fa fa-shopping-basket"></i>Cestas</a></li>
+            <li><a href="'.$url.'cestabasica/"><i class="fa fa-shopping-basket"></i> Cestas</a></li>
             <li><a href="'.$url.'cestabasica/addcesta.php"><i class="fa fa-plus"></i> Add Cestas</a></li>
             <li><a href="'.$url.'categoria/"><i class="fa fa-bars"></i> Categorias</a></li>
             <li><a href="'.$url.'categoria/addcategoria.php"><i class="fa fa-plus"></i> Add Categorias</a></li>
@@ -225,14 +225,14 @@ $aside = '<aside class="main-sidebar">
         </li>
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-table"></i> <span>Tables</span>
+            <i class="fa fa-user"></i> <span>Usuários</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/tables/simple.html"><i class="fa fa-circle-o"></i> Simple tables</a></li>
-            <li><a href="pages/tables/data.html"><i class="fa fa-circle-o"></i> Data tables</a></li>
+            <li><a href="'.$url.'usuarios/"><i class="fa fa-list-ul"></i> Lista de Usuários</a></li>
+            <li><a href="'.$url.'usuarios/addusuarios.php"><i class="fa fa-user-plus"></i> Add Usuário</a></li>
           </ul>
         </li>
 
