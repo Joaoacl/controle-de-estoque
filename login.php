@@ -57,7 +57,8 @@
     </form>
 
     <a href="#">Esqueci minha senha</a><br>
-    <a href="register.php" class="text-center">Registrar-se</a>
+
+    <!--<a href="register.php" class="text-center">Registrar-se</a><![endif]-->
 
   </div>
   <!-- /.login-box-body -->

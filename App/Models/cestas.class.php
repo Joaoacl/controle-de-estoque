@@ -9,82 +9,83 @@
   class Cestas extends Connect
  {
  	
- 	public function index()
- 	{
- 		$query = "SELECT c.idcestaBasica, c.nome AS nome_cesta, c.descricao, c.valor, c.ativo, cat.nome AS nome_categoria 
-              FROM `cestabasica` c
-              JOIN `categoriaCesta` cat ON c.categoriaCesta_idcategoriaCesta = cat.idcategoriaCesta WHERE c.`public`";
- 		$result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
+  public function index($value)
+  {
+      $query = "SELECT c.idcestaBasica, c.nome AS nome_cesta, c.descricao, c.valor, c.ativo, c.public, cat.nome AS nome_categoria 
+                FROM `cestabasica` c
+                JOIN `categoriaCesta` cat ON c.categoriaCesta_idcategoriaCesta = cat.idcategoriaCesta WHERE c.`public` = '$value'";
+      $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+  
+      if($result){
+  
+          while ($row = mysqli_fetch_array($result)) {
+  
+            
 
- 		if($result){
- 		
- 			while ($row = mysqli_fetch_array($result)) {
-
-        if($row['ativo'] == 0){
-          $c = 'class="label-warning"';
-        }else{
-           $c = " ";
-        }
- 				echo '<li '.$c.'>
-                  <!-- drag handle -->
-                      <span class="handle">
-                        <i class="fa fa-ellipsis-v"></i>
-                        <i class="fa fa-ellipsis-v"></i>
-                      </span>
-                  <span class="text">
-                  
-                  <!-- todo text -->
-                  <span class="badge left text">'.$row['nome_cesta'].'</span> </span> 
-                  | '.$row['descricao'].'
-                  | VALOR: <strong>' . $row['valor'] . '</strong> 
-                  | CATEGORIA: <strong>'.$row['nome_categoria'].'</strong>                      
-                  </span>
-
-                  <!-- Emphasis label -->
-                  
-                  <!-- General tools such as edit or delete-->
-                  <div class="tools d-flex justify-content-around">
-                    <a href="editcesta.php?id='.$row['idcestaBasica'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
-                   
-
-
-                    <a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcestaBasica'] . '" title="Excluir">
-                      <i class="fa fa-trash-o fa-lg"></i>
-                    </a>
-
-              
-                <!-- Modal -->
-                    <div class="modal" id="deleteModal' . $row['idcestaBasica'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idcestaBasica'] . '" aria-hidden="true" >
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel' . $row['idcestaBasica'] . '">Excluir Cesta</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                            Você tem certeza que deseja excluir a cesta <strong>' . $row['nome_cesta'] . '</strong>?
-                          </div>
-                          <div class="modal-footer">
-                            <form action="../../App/Database/delcesta.php" method="POST">
-                              <input type="hidden" name="idcestaBasica" value="' . $row['idcestaBasica'] . '">
-                              <button type="button" name="upload" value="Cancelar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                              <button type="submit" name="upload" value="Cadastrar" class="btn btn-danger">Excluir</button>
-                            </form>
+              if($row['ativo'] == 0){
+                  $c = 'class="label-warning"';
+              }else{
+                  $c = " ";
+              }
+  
+              echo '<li '.$c.'>
+                    <!-- drag handle -->
+                        <span class="handle">
+                          <i class="fa fa-ellipsis-v"></i>
+                          <i class="fa fa-ellipsis-v"></i>
+                        </span>
+                    <span class="text">
+                    
+                    <!-- todo text -->
+                    <span class="badge left text">'.$row['nome_cesta'].'</span> </span> 
+                    | '.$row['descricao'].'
+                    | VALOR: <strong>' . $row['valor'] . '</strong> 
+                    | CATEGORIA: <strong>'.$row['nome_categoria'].'</strong>                      
+                    </span>';
+  
+              // Verificar se `public` é igual a 1
+              if ($row['public'] == 1) {
+                  echo '
+                    <!-- General tools such as edit or delete-->
+                    <div class="tools d-flex justify-content-around">
+                      <a href="editcesta.php?id='.$row['idcestaBasica'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
+  
+                      <a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcestaBasica'] . '" title="Excluir">
+                        <i class="fa fa-trash-o fa-lg"></i>
+                      </a>
+  
+                      <!-- Modal -->
+                      <div class="modal" id="deleteModal' . $row['idcestaBasica'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idcestaBasica'] . '" aria-hidden="true" >
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="deleteModalLabel' . $row['idcestaBasica'] . '">Excluir Cesta</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              Você tem certeza que deseja excluir a cesta <strong>' . $row['nome_cesta'] . '</strong>?
+                            </div>
+                            <div class="modal-footer">
+                              <form action="../../App/Database/delcesta.php" method="POST">
+                                <input type="hidden" name="idcestaBasica" value="' . $row['idcestaBasica'] . '">
+                                <button type="button" name="upload" value="Cancelar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" name="upload" value="Cadastrar" class="btn btn-danger">Excluir</button>
+                              </form>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-
-                  </div>
-                </li>';
-                 				
- 			}
- 			
- 		}
-
- 	}
+  
+                    </div>';
+              }
+  
+              echo '</li>';
+          }
+      }
+  }
+  
 
  	public function InsertCestas($nomeCesta, $descricao, $valor, $categoriaCesta_idcategoriaCesta, $ativo){
     

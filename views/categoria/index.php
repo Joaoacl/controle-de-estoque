@@ -44,13 +44,38 @@ echo '<div class="content-wrapper">
             <!-- /.box-header -->
             <div class="box-body">
               <ul class="todo-list">';
-               $categorias->index();
+              $btn_color = "btn-danger";
+              $icon = "fa-times";
+
+              if(isset($_POST['public']) != NULL){               
+
+                $value = $_POST['public']; 
+                if($value == 1){
+                 
+                  $public = 0;
+                  $button_name = "Deletados";              
+      
+                }else{
+                  $public = 1;
+                  $button_name = "Publicados";
+                  $icon = "fa-check";
+                  $btn_color = "btn-primary";
+                }     
+      
+              }else{
+                $value = 1;
+                $public = 0;
+                $button_name = "Deletados";
+              }
+                     $categorias->index($value);
               
         echo '</ul>
             </div>
             <!-- /.box-body -->
             <div class="box-footer clearfix no-border">
               <a href="addcategoria.php" type="button" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add Categoria</a>
+            <form action="index.php" method="post">
+            <button name="public" type="submit" value="'.$public.'" class="btn '.$btn_color.' pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button></form>
             </div>
           </div>
 	 

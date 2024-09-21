@@ -78,15 +78,15 @@
  	}
  }
 
- 	public function InsertUsuario($username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $enderecoId){
+ 	public function InsertUsuario($username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $enderecoId, $pt_file){
 
- 		$query = "INSERT INTO usuario (`nomeUsuario`, `cpf`, `salario`, `cargo`, `email`, `senha`, `telefone`, `permissao`, `endereco_idendereco`, `ativo`)
-            VALUES ('$username', '$cpf', '$salario', '$cargo', '$email', '$senha', '$telefone', '$permissao', '$enderecoId', '1')";
+ 		$query = "INSERT INTO usuario (`nomeUsuario`, `cpf`, `salario`, `cargo`, `email`, `senha`, `telefone`, `permissao`, `endereco_idendereco`, `ativo`, `imagem`)
+            VALUES ('$username', '$cpf', '$salario', '$cargo', '$email', '$senha', '$telefone', '$permissao', '$enderecoId', '1', '$pt_file')";
  		if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
 
  			header('Location: ../../views/usuarios/index.php?alert=1');
  		}else{
- 			header('Location: ../../views/usuarios/index.php?alert=0');
+      die('Erro ao inserir usuário: ' . mysqli_error($this->SQL)); // Mostra o erro específico do MySQL
  		}
 
 

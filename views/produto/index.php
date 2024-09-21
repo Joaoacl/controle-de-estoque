@@ -54,7 +54,7 @@ echo '<div class="content-wrapper">
                 if($value == 1){
                  
                   $public = 0;
-                  $button_name = "Inativos";              
+                  $button_name = "Deletados";              
       
                 }else{
                   $public = 1;
@@ -66,7 +66,7 @@ echo '<div class="content-wrapper">
               }else{
                 $value = 1;
                 $public = 0;
-                $button_name = "Inativos";
+                $button_name = "Deletados";
               }
                      $produtos->index($value);
               

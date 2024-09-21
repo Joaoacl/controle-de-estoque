@@ -1,3 +1,4 @@
+<?php
 $conteudo = '  <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -508,3 +509,5 @@ $conteudo = '  <div class="content-wrapper">
     </section>
     <!-- /.content -->
   </div>';
+
+  ?>

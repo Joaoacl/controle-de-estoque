@@ -33,6 +33,13 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
               <h3 class="box-title">Usuário</h3>
             </div>
             <!-- /.box-header -->
+';
+
+if($perm == 1){
+
+echo '
+
+
 
             <!-- form start -->
             <form role="form" enctype="multipart/form-data" action="../../App/Database/insertuser.php" method="POST" onsubmit="removerEspacos()">
@@ -115,6 +122,11 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
                 <a class="btn btn-danger" href="../../views/usuarios">Cancelar</a>
               </div>
             </form>
+';}else{
+  echo'Você não possui acesso!';
+}
+echo'
+
           </div>
           <!-- /.box -->
           </div>

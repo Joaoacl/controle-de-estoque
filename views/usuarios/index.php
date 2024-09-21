@@ -44,7 +44,12 @@ echo '<div class="content-wrapper">
             <!-- /.box-header -->
             <div class="box-body">
               <ul class="todo-list">';
-               $usuario->index($perm);
+              if($perm == 1){
+                $usuario->index($perm);
+              }else{
+                echo'Você não possui acesso!';
+              }
+               
               
         echo '</ul>
             </div>

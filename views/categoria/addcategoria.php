@@ -33,7 +33,7 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form role="form" action="../../App/Database/insertcat.php" method="POST">
+            <form role="form" action="../../App/Database/insertcat.php" method="POST" onsubmit="removerEspacos()">
               <div class="box-body">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Nome da Categoria</label>

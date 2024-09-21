@@ -9,9 +9,9 @@
   class Categorias extends Connect
  {
  	
- 	public function index()
+ 	public function index($value)
  	{
- 		$query = "SELECT *FROM `categoriacesta` WHERE `public`";
+ 		$query = "SELECT *FROM `categoriacesta` WHERE `public` = '$value'";
  		$result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
 
  		if($result){
@@ -31,45 +31,49 @@
                       </span>
                 
                   <!-- todo text -->
-                  <span class="text"> '.$row['nome'].'</span>
+                  <span class="text"> '.$row['nome'].'</span>';
 				  
-                  <!-- Emphasis label -->
-                  <!-- <small class="label label-danger"><i class="fa fa-clock-o"></i> 2 mins</small> -->
-                  <!-- General tools such as edit or delete-->
-                 <div class="tools d-flex justify-content-around">
-                    <a href="editcategoria.php?id='.$row['idcategoriaCesta'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
-                    
-					<a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcategoriaCesta'] . '" title="Excluir">
-                      <i class="fa fa-trash-o fa-lg"></i>
-                    </a>
+				  if ($row['public'] == 1) {
+                  echo '
+					<!-- Emphasis label -->
+					<!-- <small class="label label-danger"><i class="fa fa-clock-o"></i> 2 mins</small> -->
+					<!-- General tools such as edit or delete-->
+					<div class="tools d-flex justify-content-around">
+						<a href="editcategoria.php?id='.$row['idcategoriaCesta'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
+						
+						<a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcategoriaCesta'] . '" title="Excluir">
+						<i class="fa fa-trash-o fa-lg"></i>
+						</a>
 
-              
-                <!-- Modal -->
-                    <div class="modal" id="deleteModal' . $row['idcategoriaCesta'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idcategoriaCesta'] . '" aria-hidden="true" >
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel' . $row['idcategoriaCesta'] . '">Excluir Categoria</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                            Você tem certeza que deseja excluir a categoria <strong>' . $row['nome'] . '</strong>?
-                          </div>
-                          <div class="modal-footer">
-                            <form action="../../App/Database/delcategoria.php" method="POST">
-                              <input type="hidden" name="idcategoriaCesta" value="' . $row['idcategoriaCesta'] . '">
-                              <button type="button" name="upload" value="Cancelar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                              <button type="submit" name="upload" value="Cadastrar" class="btn btn-danger">Excluir</button>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+				
+					<!-- Modal -->
+						<div class="modal" id="deleteModal' . $row['idcategoriaCesta'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idcategoriaCesta'] . '" aria-hidden="true" >
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="deleteModalLabel' . $row['idcategoriaCesta'] . '">Excluir Categoria</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								Você tem certeza que deseja excluir a categoria <strong>' . $row['nome'] . '</strong>?
+							</div>
+							<div class="modal-footer">
+								<form action="../../App/Database/delcategoria.php" method="POST">
+								<input type="hidden" name="idcategoriaCesta" value="' . $row['idcategoriaCesta'] . '">
+								<button type="button" name="upload" value="Cancelar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+								<button type="submit" name="upload" value="Cadastrar" class="btn btn-danger">Excluir</button>
+								</form>
+							</div>
+							</div>
+						</div>
+						</div>
 
-                  </div>
-                </li>';
+					</div>';
+				  }
+  
+              echo '</li>';
                  				
  			}
  			
@@ -79,7 +83,7 @@
 
  	public function listCategorias($value = NULL){
 
- 		$query = "SELECT *FROM `categoriacesta`  WHERE `ativo` = 1";
+ 		$query = "SELECT *FROM `categoriacesta`  WHERE `ativo` = 1 AND `public` = 1" ;
  		$result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
 
  		if($result){
