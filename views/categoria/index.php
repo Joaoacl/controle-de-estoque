@@ -44,19 +44,19 @@ echo '<div class="content-wrapper">
             <!-- /.box-header -->
             <div class="box-body">
               <ul class="todo-list">';
-              $btn_color = "btn-danger";
-              $icon = "fa-times";
+              $btn_color = "btn-primary";
+              $icon = "fa-filter";
 
-              if(isset($_POST['public']) != NULL){               
+              if(isset($_POST['ativo']) != NULL){               
 
-                $value = $_POST['public']; 
+                $value = $_POST['ativo']; 
                 if($value == 1){
                  
-                  $public = 0;
-                  $button_name = "Deletados";              
+                  $ativo = 0;
+                  $button_name = "Inativos";              
       
                 }else{
-                  $public = 1;
+                  $ativo = 1;
                   $button_name = "Publicados";
                   $icon = "fa-check";
                   $btn_color = "btn-primary";
@@ -64,8 +64,8 @@ echo '<div class="content-wrapper">
       
               }else{
                 $value = 1;
-                $public = 0;
-                $button_name = "Deletados";
+                $ativo = 0;
+                $button_name = "Inativos";
               }
                      $categorias->index($value);
               
@@ -75,7 +75,7 @@ echo '<div class="content-wrapper">
             <div class="box-footer clearfix no-border">
               <a href="addcategoria.php" type="button" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add Categoria</a>
             <form action="index.php" method="post">
-            <button name="public" type="submit" value="'.$public.'" class="btn '.$btn_color.' pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button></form>
+            <button name="ativo" type="submit" value="'.$ativo.'" class="btn '.$btn_color.' pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button></form>
             </div>
           </div>
 	 

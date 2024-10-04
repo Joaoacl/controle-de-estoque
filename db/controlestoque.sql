@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 20/08/2024 às 04:30
+-- Tempo de geração: 21/09/2024 às 21:24
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -30,17 +30,21 @@ SET time_zone = "+00:00";
 CREATE TABLE `categoriacesta` (
   `idcategoriaCesta` int(11) NOT NULL,
   `nome` varchar(45) NOT NULL,
-  `ativo` tinyint(4) DEFAULT NULL
+  `ativo` tinyint(4) DEFAULT NULL,
+  `public` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Despejando dados para a tabela `categoriacesta`
 --
 
-INSERT INTO `categoriacesta` (`idcategoriaCesta`, `nome`, `ativo`) VALUES
-(1, 'Alimentícia', 1),
-(2, 'Limpeza', 1),
-(3, 'teste1', NULL);
+INSERT INTO `categoriacesta` (`idcategoriaCesta`, `nome`, `ativo`, `public`) VALUES
+(1, 'Alimentícia', 1, 1),
+(2, 'Limpeza', 1, 1),
+(15, 'teste1', 1, 0),
+(16, 'teste2', 0, 1),
+(19, 'cat123', 1, 1),
+(20, 'categoria teste', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -54,15 +58,20 @@ CREATE TABLE `cestabasica` (
   `descricao` varchar(45) NOT NULL,
   `valor` varchar(45) DEFAULT NULL,
   `categoriaCesta_idcategoriaCesta` int(11) NOT NULL,
-  `ativo` tinyint(1) DEFAULT 1
+  `ativo` tinyint(1) DEFAULT 1,
+  `public` int(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Despejando dados para a tabela `cestabasica`
 --
 
-INSERT INTO `cestabasica` (`idcestaBasica`, `nome`, `descricao`, `valor`, `categoriaCesta_idcategoriaCesta`, `ativo`) VALUES
-(1, 'Cesta Básica', 'Cesta composta por produtos alimentícios', '130,00', 1, 1);
+INSERT INTO `cestabasica` (`idcestaBasica`, `nome`, `descricao`, `valor`, `categoriaCesta_idcategoriaCesta`, `ativo`, `public`) VALUES
+(1, 'Cesta Básica Alimentos', 'Cesta composta por produtos alimentícios', '130,00', 1, 1, 1),
+(40, 'cesta2', 'Cesta composta p', '90,00', 1, 1, 1),
+(43, 'teste11', 'testeteste', 'R$ 234.34', 1, 1, 1),
+(44, 'dwdvb', 'dwdw', 'R$ 3.33', 2, 1, 0),
+(45, 'cesta basica 1234', 'cesta', 'R$ 120.00', 2, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -72,16 +81,18 @@ INSERT INTO `cestabasica` (`idcestaBasica`, `nome`, `descricao`, `valor`, `categ
 
 CREATE TABLE `cestabasica_has_produto` (
   `cestaBasica_idcestaBasica` int(11) NOT NULL,
-  `produto_idproduto` int(11) NOT NULL
+  `produto_idproduto` int(11) NOT NULL,
+  `quantidade` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Despejando dados para a tabela `cestabasica_has_produto`
 --
 
-INSERT INTO `cestabasica_has_produto` (`cestaBasica_idcestaBasica`, `produto_idproduto`) VALUES
-(1, 1),
-(1, 2);
+INSERT INTO `cestabasica_has_produto` (`cestaBasica_idcestaBasica`, `produto_idproduto`, `quantidade`) VALUES
+(45, 1, 1),
+(45, 2, 1),
+(45, 3, 1);
 
 -- --------------------------------------------------------
 
@@ -109,18 +120,19 @@ CREATE TABLE `cliente` (
   `desconto` varchar(45) DEFAULT NULL,
   `email` varchar(45) DEFAULT NULL,
   `telefone` varchar(11) NOT NULL,
-  `endereco_idendereco` int(11) NOT NULL
+  `endereco_idendereco` int(11) NOT NULL,
+  `ativo` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Despejando dados para a tabela `cliente`
 --
 
-INSERT INTO `cliente` (`idcliente`, `nome`, `cpf`, `desconto`, `email`, `telefone`, `endereco_idendereco`) VALUES
-(1, 'Joaozinho', '12345678911', NULL, 'joaozinho@gmail.com', '17988888888', 1),
-(2, 'julia', '233472844', '10', 'julia@email.com', '17988888888', 4),
-(4, 'ana', '2324324342', '10', 'ana@email.com', '21355645636', 5),
-(5, 'nicolas', '1234567890', '5', 'nicolas@gmail.com', '1837378273', 6);
+INSERT INTO `cliente` (`idcliente`, `nome`, `cpf`, `desconto`, `email`, `telefone`, `endereco_idendereco`, `ativo`) VALUES
+(1, 'Joaozinho', '12345678911', NULL, 'joaozinho@gmail.com', '17988888888', 1, NULL),
+(2, 'julia', '233472844', '10', 'julia@email.com', '17988888888', 4, NULL),
+(4, 'ana', '2324324342', '10', 'ana@email.com', '21355645636', 5, NULL),
+(5, 'nicolas', '1234567890', '5', 'nicolas@gmail.com', '1837378273', 6, NULL);
 
 -- --------------------------------------------------------
 
@@ -148,7 +160,12 @@ INSERT INTO `endereco` (`idendereco`, `rua`, `numero`, `bairro`, `cidade`, `esta
 (3, 'Rua Exemplo', '123', 'Bairro Exemplo', 'Cidade Exemplo', 'mg', '12345-678'),
 (4, 'Avenida Teste', '456', 'Bairro Teste', 'Cidade Teste', 'sp', '98765-432'),
 (5, 'teste', '1213', 'teste', 'teste', 'ts', '231453152'),
-(6, 'teste1', '2749', 'teste1', 'teste1', 'sp', '875876986986');
+(6, 'teste1', '2749', 'teste1', 'teste1', 'sp', '875876986986'),
+(11, 'rua 1', '2345', 'bairro', 'cidade', 'sp', '22222-222'),
+(12, 'rua 33', '3333', 'bairro3', 'cidade3', 'sp', '44444-444'),
+(13, 'rua 23', '2354', 'bairro123', 'cidade123', 'sp', '11111-111'),
+(14, 'av 1', '4444', 'novo', 'barretos', 'sp', '22222-222'),
+(15, 'rua1', '111', 'bairro2', 'cidade2', 'sp', '22222-222');
 
 -- --------------------------------------------------------
 
@@ -164,7 +181,8 @@ CREATE TABLE `fornecedor` (
   `numConta` varchar(45) DEFAULT NULL,
   `agencia` varchar(45) DEFAULT NULL,
   `banco` varchar(45) DEFAULT NULL,
-  `endereco_idendereco` int(11) NOT NULL
+  `endereco_idendereco` int(11) NOT NULL,
+  `ativo` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -179,16 +197,22 @@ CREATE TABLE `produto` (
   `nome` varchar(45) DEFAULT NULL,
   `valor` varchar(45) DEFAULT NULL,
   `quantidade` int(11) DEFAULT NULL,
-  `descricao` varchar(45) DEFAULT NULL
+  `descricao` varchar(45) DEFAULT NULL,
+  `public` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Despejando dados para a tabela `produto`
 --
 
-INSERT INTO `produto` (`idproduto`, `ativo`, `nome`, `valor`, `quantidade`, `descricao`) VALUES
-(1, 1, 'Arroz', '20,00', 40, 'Arroz de 5kg'),
-(2, 1, 'feijão', '10,00', 20, 'Feijão 1kg');
+INSERT INTO `produto` (`idproduto`, `ativo`, `nome`, `valor`, `quantidade`, `descricao`, `public`) VALUES
+(1, 1, 'Arroz', '20,00', 40, 'Arroz de 5kg', 1),
+(2, 1, 'Feijão', '10,00', 20, 'Feijão 1kg', 1),
+(3, 1, 'Açúcar', '15,00', 6, 'Pacote açúcar cristal', 1),
+(5, 1, 'Farinha', '8,00', 5, 'Farinha de trigo', 1),
+(6, 1, 'Óleo', '10,00', 30, 'óleo de soja', 1),
+(25, 1, 'teste 3', 'R$ 12.00', 1, 'tezte', 0),
+(26, 0, 'teste30', 'R$ 33.33', 45, 'fegfwg', 0);
 
 -- --------------------------------------------------------
 
@@ -201,7 +225,8 @@ CREATE TABLE `solicitacompra` (
   `dataEntrega` date DEFAULT NULL,
   `quantidade` int(11) DEFAULT NULL,
   `produto_idproduto` int(11) NOT NULL,
-  `fornecedor_idfornecedor` int(11) NOT NULL
+  `fornecedor_idfornecedor` int(11) NOT NULL,
+  `ativo` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -212,26 +237,27 @@ CREATE TABLE `solicitacompra` (
 
 CREATE TABLE `usuario` (
   `idusuario` int(11) NOT NULL,
-  `nome` varchar(45) NOT NULL,
-  `cpf` varchar(11) NOT NULL,
-  `salario` decimal(10,0) DEFAULT NULL,
+  `nomeUsuario` varchar(45) NOT NULL,
+  `cpf` varchar(14) NOT NULL,
+  `salario` varchar(12) DEFAULT NULL,
   `cargo` varchar(45) DEFAULT NULL,
   `email` varchar(45) DEFAULT NULL,
   `senha` varchar(45) DEFAULT NULL,
-  `telefone` varchar(11) DEFAULT NULL,
+  `telefone` varchar(15) DEFAULT NULL,
   `endereco_idendereco` int(11) NOT NULL,
   `permissao` tinyint(4) DEFAULT NULL,
-  `imagem` varchar(100) DEFAULT NULL
+  `imagem` varchar(100) DEFAULT NULL,
+  `ativo` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Despejando dados para a tabela `usuario`
 --
 
-INSERT INTO `usuario` (`idusuario`, `nome`, `cpf`, `salario`, `cargo`, `email`, `senha`, `telefone`, `endereco_idendereco`, `permissao`, `imagem`) VALUES
-(1, 'admin', '12345678911', NULL, NULL, NULL, 'admin', NULL, 1, 1, 'dist/img/person.png'),
-(2, 'joao', '12345678911', 2, 'vendedor', 'joaozinho@gmail.com', '1234', '17988888888', 2, NULL, NULL),
-(3, 'João Silva', '12345678901', 2500, 'Vendedor', 'joao.silva@example.com', 'senha123', '1234567890', 1, NULL, NULL);
+INSERT INTO `usuario` (`idusuario`, `nomeUsuario`, `cpf`, `salario`, `cargo`, `email`, `senha`, `telefone`, `endereco_idendereco`, `permissao`, `imagem`, `ativo`) VALUES
+(1, 'admin', '12345678911', NULL, 'admin', 'admin@admin.com', 'admin', NULL, 1, 1, 'dist/img/person.png', 1),
+(11, 'joao', '222.222.222-22', 'R$ 2.222,22', 'vendedor', 'joao@gmail.com', '$2y$10$jz4PkAs.xBfFvidnb1QK/.ULNY/XhJlkWIZILW', '(22) 22222-2222', 14, 2, 'dist/img/perfil.png', 1),
+(12, 'julia', '222.222.222-22', 'R$ 222,22', 'vendedor', 'julia@email.com', 'e10adc3949ba59abbe56e057f20f883e', '(22) 22222-2222', 15, 2, 'dist/img/LogoHome.png', 1);
 
 -- --------------------------------------------------------
 
@@ -253,7 +279,8 @@ CREATE TABLE `usuario_has_venda` (
 CREATE TABLE `venda` (
   `idvenda` int(11) NOT NULL,
   `valorTotal` decimal(10,0) DEFAULT NULL,
-  `cliente_idcliente` int(11) NOT NULL
+  `cliente_idcliente` int(11) NOT NULL,
+  `dataVenda` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
@@ -353,13 +380,13 @@ ALTER TABLE `venda`
 -- AUTO_INCREMENT de tabela `categoriacesta`
 --
 ALTER TABLE `categoriacesta`
-  MODIFY `idcategoriaCesta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `idcategoriaCesta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de tabela `cestabasica`
 --
 ALTER TABLE `cestabasica`
-  MODIFY `idcestaBasica` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idcestaBasica` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT de tabela `cliente`
@@ -371,7 +398,7 @@ ALTER TABLE `cliente`
 -- AUTO_INCREMENT de tabela `endereco`
 --
 ALTER TABLE `endereco`
-  MODIFY `idendereco` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idendereco` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de tabela `fornecedor`
@@ -383,7 +410,7 @@ ALTER TABLE `fornecedor`
 -- AUTO_INCREMENT de tabela `produto`
 --
 ALTER TABLE `produto`
-  MODIFY `idproduto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idproduto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de tabela `solicitacompra`
@@ -395,7 +422,7 @@ ALTER TABLE `solicitacompra`
 -- AUTO_INCREMENT de tabela `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idusuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `idusuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de tabela `venda`

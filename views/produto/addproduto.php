@@ -39,19 +39,19 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
               <div class="box-body">
    
                   <label for="exampleInputEmail1">Nome Produto</label>
-                  <input type="text" name="nomeproduto" class="form-control" id="exampleInputEmail1" placeholder="Nome Produto" maxlength="45">
+                  <input type="text" name="nomeproduto" class="form-control" id="exampleInputEmail1" placeholder="Nome Produto" maxlength="45" required>
                 
                   
                   <label for="exampleInputEmail1">Descrição</label>
-                  <input type="text" name="descricaoproduto" class="form-control" id="exampleInputEmail1" placeholder="Breve Descrição..." maxlength="45">
+                  <input type="text" name="descricaoproduto" class="form-control" id="exampleInputEmail1" placeholder="Breve Descrição..." maxlength="45" required>
              
                   
                   <label for="exampleInputEmail1">Valor</label>
-                  <input type="text" name="valorproduto" class="form-control" id="exampleInputEmail1" placeholder="R$" oninput="mascaraValor(this)">
+                  <input type="text" name="valorproduto" class="form-control" id="exampleInputEmail1" placeholder="R$" oninput="mascaraValor(this)" onchange="validarValorFinal(this)" required>
                 
 
                   <label for="exampleInputEmail1">Quantidade</label>
-                  <input type="number" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Quantidade" min="1" oninput="validarQuantidade(this)" onchange="validarQuantidadeFinal(this)">
+                  <input type="number" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Quantidade" min="1" max="1000" oninput="validarQuantidade(this)" onchange="validarQuantidadeFinal(this)" required>
                 </div>
 
 
@@ -81,17 +81,28 @@ echo $javascript;
 
 <script>
 function validarQuantidade(input) {
-    // Garante que o valor sempre seja positivo enquanto digita
+    // Garante que o valor seja positivo enquanto o usuário digita
     if (input.value < 0) {
-        input.value = Math.abs(input.value);
+        input.value = Math.abs(input.value); // Torna o valor positivo
+    }
+
+    // Garante que o valor não exceda o limite máximo de 1000
+    if (input.value > 1000) {
+        input.value = 1000; // Ajusta para o valor máximo permitido
     }
 }
 
 function validarQuantidadeFinal(input) {
-    // Corrige o valor final para 0 se estiver em branco ou negativo ao sair do campo
-    if (input.value === "" || input.value < 0) {
+    // Corrige o valor para 1 se estiver vazio ou negativo ao sair do campo
+    if (input.value === "" || input.value < 1) {
         input.value = 1;
-        alert("A quantidade não pode ser negativa ou vazia.");
+        alert("A quantidade não pode ser negativa ou vazia. Definido como 1.");
+    }
+
+    // Corrige o valor final se exceder o limite de 1000
+    if (input.value > 1000) {
+        input.value = 1000;
+        alert("A quantidade máxima permitida é 1000.");
     }
 }
 </script>

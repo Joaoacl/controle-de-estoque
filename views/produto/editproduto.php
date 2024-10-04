@@ -46,16 +46,16 @@ echo'
               <div class="box-body">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Nome do Produto</label>
-                  <input type="text" name="nomeproduto" class="form-control" id="exampleInputEmail1" placeholder="Nome Produto" value="'.$resp['Produto']['nome'].'" maxlength="45">
+                  <input type="text" name="nomeproduto" class="form-control" id="exampleInputEmail1" placeholder="Nome Produto" value="'.$resp['Produto']['nome'].'" maxlength="45" required>
 
                   <label for="exampleInputEmail1">Descrição</label>
-                  <input type="text" name="descricaoproduto" class="form-control" id="exampleInputEmail1" placeholder="Descrição..." value="'.$resp['Produto']['descricao'].'" maxlength="45">
+                  <input type="text" name="descricaoproduto" class="form-control" id="exampleInputEmail1" placeholder="Descrição..." value="'.$resp['Produto']['descricao'].'" maxlength="45" required>
 
                   <label for="exampleInputEmail1">Valor</label>
-                  <input type="text" name="valorproduto" class="form-control" id="exampleInputEmail1" placeholder="R$" value="'.$resp['Produto']['valor'].'">
+                  <input type="text" name="valorproduto" class="form-control" id="exampleInputEmail1" placeholder="R$" value="'.$resp['Produto']['valor'].'" oninput="mascaraValor(this)" onchange="validarValorFinal(this)" required>
 
                   <label for="exampleInputEmail1">Quantidade</label>
-                  <input type="number" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Qtd" value="'.$resp['Produto']['quantidade'].'" oninput="validarQuantidade(this)" onchange="validarQuantidadeFinal(this)">
+                  <input type="number" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Qtd" value="'.$resp['Produto']['quantidade'].'" min="1" max="1000" oninput="validarQuantidade(this)" onchange="validarQuantidadeFinal(this)" required>
 
                  <label for="ativo">Status do Produto</label>
                   <select name="ativo" class="form-control" id="ativo">
@@ -86,3 +86,31 @@ echo '</div>';
 echo  $footer;
 echo $javascript;
 ?>
+
+<script>
+function validarQuantidade(input) {
+    // Garante que o valor seja positivo enquanto o usuário digita
+    if (input.value < 0) {
+        input.value = Math.abs(input.value); // Torna o valor positivo
+    }
+
+    // Garante que o valor não exceda o limite máximo de 1000
+    if (input.value > 1000) {
+        input.value = 1000; // Ajusta para o valor máximo permitido
+    }
+}
+
+function validarQuantidadeFinal(input) {
+    // Corrige o valor para 1 se estiver vazio ou negativo ao sair do campo
+    if (input.value === "" || input.value < 1) {
+        input.value = 1;
+        alert("A quantidade não pode ser negativa ou vazia. Definido como 1.");
+    }
+
+    // Corrige o valor final se exceder o limite de 1000
+    if (input.value > 1000) {
+        input.value = 1000;
+        alert("A quantidade máxima permitida é 1000.");
+    }
+}
+</script>

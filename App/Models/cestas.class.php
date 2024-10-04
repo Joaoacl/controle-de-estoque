@@ -13,7 +13,7 @@
   {
       $query = "SELECT c.idcestaBasica, c.nome AS nome_cesta, c.descricao, c.valor, c.ativo, c.public, cat.nome AS nome_categoria 
                 FROM `cestabasica` c
-                JOIN `categoriaCesta` cat ON c.categoriaCesta_idcategoriaCesta = cat.idcategoriaCesta WHERE c.`public` = '$value'";
+                JOIN `categoriaCesta` cat ON c.categoriaCesta_idcategoriaCesta = cat.idcategoriaCesta WHERE c.`public` = 1 AND c.`ativo` = '$value'";
       $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
   
       if($result){
@@ -37,7 +37,8 @@
                     <span class="text">
                     
                     <!-- todo text -->
-                    <span class="badge left text">'.$row['nome_cesta'].'</span> </span> 
+                    <span class="badge left text">'.$row['idcestaBasica'].'</span>
+                    <span class="left text">'.$row['nome_cesta'].'</span> </span> 
                     | '.$row['descricao'].'
                     | VALOR: <strong>' . $row['valor'] . '</strong> 
                     | CATEGORIA: <strong>'.$row['nome_categoria'].'</strong>                      
@@ -100,13 +101,13 @@
  		}
  	}//InsertItens
 
-   public function insertProdutoNaCesta($idcestaBasica, $idProduto)
-   {
-       $query = "INSERT INTO `cestabasica_has_produto` (`cestaBasica_idcestaBasica`, `produto_idproduto`, `quantidade`) VALUES ('$idcestaBasica', '$idProduto', 1)";
-       mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
-   }
-   
+   public function insertProdutoNaCesta($idcestaBasica, $idProduto, $quantidade) {
+    $query = "INSERT INTO `cestabasica_has_produto` (`cestaBasica_idcestaBasica`, `produto_idproduto`, `quantidade`) 
+              VALUES ('$idcestaBasica', '$idProduto', '$quantidade')";
+    mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+    }
 
+   
   public function editCestas($value)
   {
     $query = "SELECT *FROM `cestabasica` WHERE `idcestaBasica` = '$value'";
@@ -130,30 +131,36 @@
     
   }
 
-  public function updateCestas($idcestaBasica, $nomeCesta, $descricao, $valor, $categoriaCesta_idcategoriaCesta, $produtosSelecionados, $ativo)
+  public function updateCestas($idcestaBasica, $nomeCesta, $descricao, $valor, $categoriaCesta_idcategoriaCesta, $produtosSelecionados, $quantidades, $ativo)
   {
-    $queryUpdateCesta = "UPDATE `cestabasica` SET 
-                `nome`= '$nomeCesta',
-                `descricao`= '$descricao',
-                `valor`= '$valor',
-                `categoriaCesta_idcategoriaCesta`= '$categoriaCesta_idcategoriaCesta',
-                `ativo` = '$ativo'
-              WHERE `idcestaBasica`= '$idcestaBasica'";
-
-    mysqli_query($this->SQL, $queryUpdateCesta) or die(mysqli_error($this->SQL));
-
-
-    $queryDeleteProdutos = "DELETE FROM `cestabasica_has_produto` WHERE `cestaBasica_idcestaBasica` = '$idcestaBasica'";
-    mysqli_query($this->SQL, $queryDeleteProdutos) or die(mysqli_error($this->SQL));
-
-
-    foreach($produtosSelecionados as $idProduto) {
-    $this->insertProdutoNaCesta($idcestaBasica, $idProduto);
-    }
-
-
-    header('Location: ../../views/cestabasica/index.php?alert=1');
-}
+      // Atualiza os dados da cesta
+      $queryUpdateCesta = "UPDATE `cestabasica` SET 
+                  `nome`= '$nomeCesta',
+                  `descricao`= '$descricao',
+                  `valor`= '$valor',
+                  `categoriaCesta_idcategoriaCesta`= '$categoriaCesta_idcategoriaCesta',
+                  `ativo` = '$ativo'
+                WHERE `idcestaBasica`= '$idcestaBasica'";
+  
+      mysqli_query($this->SQL, $queryUpdateCesta) or die(mysqli_error($this->SQL));
+  
+      // Remove os produtos anteriores da cesta para inserir os novos
+      $queryDeleteProdutos = "DELETE FROM `cestabasica_has_produto` WHERE `cestaBasica_idcestaBasica` = '$idcestaBasica'";
+      mysqli_query($this->SQL, $queryDeleteProdutos) or die(mysqli_error($this->SQL));
+  
+      // Insere os produtos selecionados com as quantidades corretas
+      foreach($produtosSelecionados as $idProduto) {
+          // Verifica se existe uma quantidade definida para o produto
+          $quantidade = isset($quantidades[$idProduto]) ? $quantidades[$idProduto] : 1;
+  
+          // Insere cada produto com sua quantidade
+          $this->insertProdutoNaCesta($idcestaBasica, $idProduto, $quantidade);
+      }
+  
+      // Redireciona para a página de visualização das cestas
+      header('Location: ../../views/cestabasica/index.php?alert=1');
+  }
+  
 
   public function deleteCestas($idcestaBasica)
   {

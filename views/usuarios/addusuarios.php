@@ -42,43 +42,48 @@ echo '
 
 
             <!-- form start -->
-            <form role="form" enctype="multipart/form-data" action="../../App/Database/insertuser.php" method="POST" onsubmit="removerEspacos()">
+            <form name="meuFormulario" role="form" enctype="multipart/form-data" action="../../App/Database/insertuser.php" method="POST" onsubmit="return validarFormulario() && removerEspacos()">
               <div class="box-body">
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Nome do Usuário</label>
+                  <label for="exampleInputEmail1">Nome do Usuário *</label>
                   <input type="text" name="username" class="form-control" id="exampleInputEmail1" placeholder="Nome do Usuário" maxlength="45" required>
                 
 
                 
-                <label for="exampleInputEmail1">CPF</label>
+                <label for="exampleInputEmail1">CPF *</label>
                 <input type="text" name="cpf" id="cpf" class="form-control" placeholder="CPF" maxlength="14" oninput="aplicarMascaraCPF(this)" required>
               
 
                 
-                <label for="exampleInputEmail1">Salário</label>
+                <label for="exampleInputEmail1">Salário *</label>
                 <input type="text" name="salario"  class="form-control" id="exampleInputEmail1" placeholder="R$" oninput="mascaraValor(this)" required>
                 
 
                 
-                <label for="exampleInputEmail1">Cargo</label>
+                <label for="exampleInputEmail1">Cargo *</label>
                 <input type="text" name="cargo" class="form-control" id="exampleInputEmail1" placeholder="Cargo" maxlength="45" required>
                 
-
                
-                <label for="exampleInputEmail1">Email</label>
-                <input type="text" name="email" class="form-control" id="exampleInputEmail1" placeholder="Email" maxlength="45" required>
-               
+                <label for="exampleInputEmail1">E-mail *</label>
+                <input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="E-mail" maxlength="45" required oninput="validarFormulario()">
+
+                <label for="confirmar_email">Confirmar E-mail *</label>
+                <input type="email" id="confirmar_email" class="form-control" name="confirmar_email" maxlength="45" placeholder="Confirmar E-mail" required oninput="validarFormulario()">
+                <div id="errorEmail" class="error"></div>
 
                 
-                <label for="exampleInputEmail1">Senha</label>
-                <input type="password" name="senha" id="senha" class="form-control" placeholder="Senha" maxlength="45" required>
+                <label for="exampleInputEmail1">Senha *</label>
+                <input type="password" name="senha" id="senha" class="form-control" placeholder="Senha" maxlength="45" required oninput="validarFormulario()">
                 
 
+                <label for="confirmar_senha">Confirmar Senha *</label>
+                <input type="password" id="confirmar_senha" class="form-control" name="confirmar_senha" placeholder="Confirmar Senha"  maxlength="45" required oninput="validarFormulario()">
+                <div id="errorSenha" class="error"></div>
                 
-                <label for="exampleInputEmail1">Telefone</label>
-                <input type="text" name="telefone" id="telefone" class="form-control" placeholder="Telefone" maxlength="15" oninput="aplicarMascaraTelefone(this)">
+                <label for="exampleInputEmail1">Telefone *</label>
+                <input type="text" name="telefone" id="telefone" class="form-control" placeholder="Telefone" maxlength="15" oninput="aplicarMascaraTelefone(this)" required>
 
-                <label for="exampleInputEmail1">Permissão</label>
+                <label for="exampleInputEmail1">Permissão *</label>
                 <select class="form-control" name="permissao" type="permissao" required>
                 <option value="1">Administrador</option>
                 <option value="2">Vendedor</option>
@@ -92,22 +97,22 @@ echo '
                 <div class="form-group">
                 <h4 >Endereço</h4>
 
-                  <label for="exampleInputEmail1">Rua</label>
+                  <label for="exampleInputEmail1">Rua *</label>
                   <input type="text" name="rua" class="form-control" id="exampleInputEmail1" placeholder="Rua" required maxlength="45">
 
-                  <label for="exampleInputEmail1">Número</label>
+                  <label for="exampleInputEmail1">Número *</label>
                   <input type="text" name="numero" class="form-control" id="exampleInputEmail1" placeholder="Número" required maxlength="8">
 
-                  <label for="exampleInputEmail1">Bairro</label>
+                  <label for="exampleInputEmail1">Bairro *</label>
                   <input type="text" name="bairro" class="form-control" id="exampleInputEmail1" placeholder="Bairro" required maxlength="45">
 
-                  <label for="exampleInputEmail1">Cidade</label>
+                  <label for="exampleInputEmail1">Cidade *</label>
                   <input type="text" name="cidade" class="form-control" id="exampleInputEmail1" placeholder="Cidade" required maxlength="45">
 
-                  <label for="exampleInputEmail1">Estado</label>
+                  <label for="exampleInputEmail1">Estado *</label>
                   <input type="text" name="estado" class="form-control" id="exampleInputEmail1" placeholder="Ex: SP, MG, PR" required maxlength="2">
 
-                  <label for="exampleInputEmail1">CEP</label>
+                  <label for="exampleInputEmail1">CEP *</label>
                   <input type="text" name="cep" class="form-control" 
                   id="exampleInputEmail1" placeholder="CEP" required maxlength="9" oninput="aplicarMascaraCEP(this)">
                 </div>
@@ -118,7 +123,7 @@ echo '
               <!-- /.box-body -->
 
               <div class="box-footer">
-                <button type="submit" name="upload" class="btn btn-primary" value="Cadastrar">Cadastrar</button>
+                <button type="submit" id="botaoSubmit" name="upload" class="btn btn-primary" value="Cadastrar" disabled>Cadastrar</button>
                 <a class="btn btn-danger" href="../../views/usuarios">Cancelar</a>
               </div>
             </form>
@@ -141,6 +146,14 @@ echo  $footer;
 echo $javascript;
 ?>
 
+<style>
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+</style>
+
+
 <script>
     // Máscara para telefone no formato (99) 99999-9999
     function aplicarMascaraTelefone(input) {
@@ -148,7 +161,7 @@ echo $javascript;
         valor = valor.replace(/^(\d{2})(\d)/g, '($1) $2'); // Coloca parênteses em volta dos dois primeiros dígitos
         valor = valor.replace(/(\d{5})(\d)/, '$1-$2'); // Coloca o traço depois dos cinco primeiros dígitos
         input.value = valor;
-    }
+    };
 
     // Máscara para CPF no formato 999.999.999-99
     function aplicarMascaraCPF(input) {
@@ -157,18 +170,62 @@ echo $javascript;
         valor = valor.replace(/(\d{3})(\d)/, '$1.$2'); // Coloca outro ponto após o terceiro dígito
         valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Coloca um traço antes dos dois últimos dígitos
         input.value = valor;
-    }
+    };
 
     // Campo de senha sem máscara, mas transformado em password (esconde os caracteres)
     function esconderSenha(input) {
         input.type = 'password';
-    }
+    };
 
     // Máscara para CEP no formato 99999-999
     function aplicarMascaraCEP(input) {
     let valor = input.value.replace(/\D/g, ''); // Remove tudo que não é dígito
     valor = valor.replace(/^(\d{5})(\d)/, '$1-$2'); // Coloca um traço entre o quinto e o sexto dígito
     input.value = valor;
-    }
+    };
+
+    function validarFormulario() {
+            var email = document.forms["meuFormulario"]["email"].value;
+            var confirmar_email = document.forms["meuFormulario"]["confirmar_email"].value;
+            var senha = document.forms["meuFormulario"]["senha"].value;
+            var confirmar_senha = document.forms["meuFormulario"]["confirmar_senha"].value;
+
+            var errorEmail = document.getElementById("errorEmail");
+            var errorSenha = document.getElementById("errorSenha");
+
+            var formValido = true;
+
+            // Validação de Email
+            if (email !== confirmar_email) {
+                errorEmail.textContent = "Os emails não correspondem.";
+                formValido = false; // Bloqueia o envio
+            } else {
+                errorEmail.textContent = ""; // Limpa a mensagem de erro
+            }
+
+            // Validação de Senha
+            if (senha !== confirmar_senha) {
+                errorSenha.textContent = "As senhas não correspondem.";
+                formValido = false; // Bloqueia o envio
+            } else {
+                errorSenha.textContent = ""; // Limpa a mensagem de erro
+            }
+
+            botaoSubmit.disabled = !formValido;
+
+            // Retorna se o formulário é válido ou não
+            return formValido;
+      };
+
+      function inicializarValidacao() {
+            var inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', validarFormulario);
+            });
+      };
+
+        // Inicializa a validação quando a página é carregada
+        window.onload = inicializarValidacao;
+
 </script>
 

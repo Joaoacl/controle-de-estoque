@@ -22,6 +22,23 @@ echo '<div class="content-wrapper">
     <section class="content">
     ';
     require '../../layout/alert.php';
+   
+    
+    if (isset($_GET['alert'])) {
+      if ($_GET['alert'] == 'email_ja_existe') {
+          echo '<div class="alert alert-danger">Este email já está cadastrado!</div>';
+      } elseif ($_GET['alert'] == 'cpf_ja_existe') {
+          echo '<div class="alert alert-danger">CPF já cadastrado!</div>';
+      } elseif ($_GET['alert'] == 'campos_obrigatorios') {
+          echo '<div class="alert alert-danger">Preencha todos os campos obrigatórios!</div>';
+      } elseif ($_GET['alert'] == 'sucesso') {
+        echo '<div class="alert alert-success">Usuário adicionado com sucesso!</div>';
+      } elseif ($_GET['alert'] == 'update_sucesso') {
+        echo '<div class="alert alert-success">Usuário alterado com sucesso!</div>';
+      }
+
+  };
+  
     echo '
       <!-- Small boxes (Stat box) -->
       <div class="row">

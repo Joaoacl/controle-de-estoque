@@ -11,7 +11,7 @@
  	
  	public function index($value)
  	{
- 		$query = "SELECT *FROM `categoriacesta` WHERE `public` = '$value'";
+ 		$query = "SELECT *FROM `categoriacesta` WHERE `public` = 1 AND `ativo` = '$value'";
  		$result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
 
  		if($result){

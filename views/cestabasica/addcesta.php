@@ -41,17 +41,17 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
 
                  <div class="form-group">
                   <label for="exampleInputEmail1">Nome Cesta</label>
-                  <input type="text" name="nomecesta" class="form-control" id="exampleInputEmail1" placeholder="Nome Cesta" maxlength="45">
+                  <input type="text" name="nomecesta" class="form-control" id="exampleInputEmail1" placeholder="Nome Cesta" maxlength="45" required>
                 </div>
 
                  <div class="form-group">
                   <label for="exampleInputEmail1">Descrição</label>
-                  <input type="text" name="descricao" class="form-control" id="exampleInputEmail1" placeholder="Breve Descrição..." maxlength="45">
+                  <input type="text" name="descricao" class="form-control" id="exampleInputEmail1" placeholder="Breve Descrição..." maxlength="45" required>
                 </div>
 
                  <div class="form-group">
                   <label for="exampleInputEmail1">Valor</label>
-                  <input type="text" name="valor" class="form-control" id="exampleInputEmail1" placeholder="R$" oninput="mascaraValor(this)">
+                  <input type="text" name="valor" class="form-control" id="exampleInputEmail1" placeholder="R$" oninput="mascaraValor(this)" onchange="validarValorFinal(this)" required>
                 </div>
 
                 <div class="form-group">
@@ -64,10 +64,13 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
                 </div>
 
                 <div class="form-group">
-                  <label for="produtos">Produtos da Cesta (Selecione os produtos que compõem essa cesta)</label>
+                  <label for="produtos">Produtos da Cesta (Selecione os produtos que compõem essa cesta e sua quantidade)</label>
+                  <form id="formCesta">
                     ';
                     $produtos->listProdutosCheckbox();
                     echo '
+                    <p>Total de itens selecionados: <span id="totalSelecionados">0</span></p>
+                  </form>
                 </div>
 
 
@@ -94,3 +97,45 @@ echo '</div>';
 echo  $footer;
 echo $javascript;
 ?>
+
+<script>
+function verificarSelecionados() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const quantidades = document.querySelectorAll('.quantidade');
+    let totalSelecionados = 0;
+
+    checkboxes.forEach((checkbox, index) => {
+        if (checkbox.checked) {
+            quantidades[index].disabled = false;
+            totalSelecionados++;
+        } else {
+            quantidades[index].disabled = true;
+            quantidades[index].value = 1; // Reseta o valor da quantidade quando desmarcar
+        }
+    });
+
+    // Atualiza o contador de itens selecionados
+    document.getElementById('totalSelecionados').textContent = totalSelecionados;
+
+    // Se mais de 10 itens estiverem selecionados, desabilita os outros checkboxes
+    if (totalSelecionados >= 10) {
+        checkboxes.forEach(checkbox => {
+            if (!checkbox.checked) {
+                checkbox.disabled = true;
+            }
+        });
+    } else {
+        checkboxes.forEach(checkbox => {
+            checkbox.disabled = false;
+        });
+    }
+}
+
+// Adiciona um evento que chama a função toda vez que um checkbox é alterado
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', verificarSelecionados);
+});
+
+// Chama a função logo ao carregar a página para garantir que o estado inicial esteja correto
+document.addEventListener('DOMContentLoaded', verificarSelecionados);
+</script>

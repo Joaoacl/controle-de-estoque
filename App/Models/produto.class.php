@@ -6,12 +6,13 @@
 
 require_once 'connect.php';
 
+
 class Produtos extends Connect
 {
  	
   public function index($value)
   {
-      $query = "SELECT *FROM `produto` WHERE `public` = '$value'";
+      $query = "SELECT *FROM `produto` WHERE `public` = 1 AND `ativo` = '$value'";
       $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
   
       if($result){
@@ -86,27 +87,34 @@ class Produtos extends Connect
 
     if($result) {
         while ($row = mysqli_fetch_array($result)) {
-            $checked = in_array($row['idproduto'], $produtosSelecionados) ? "checked" : "";
+            // Verificar se o produto está na cesta (caso seja edição)
+            $checked = array_key_exists($row['idproduto'], $produtosSelecionados) ? "checked" : "";
+            $quantidade = $checked ? $produtosSelecionados[$row['idproduto']] : 1;
+
             echo '<div class="form-check">';
-            echo '<input class="form-check-input" type="checkbox" name="produtos[]" value="'.$row['idproduto'].'" '.$checked.'>';
+            echo '<input class="form-check-input" type="checkbox" name="produtos[]" value="'.$row['idproduto'].'" onchange="verificarSelecionados()" '.$checked.'>';
             echo ' <label class="form-check-label">'.$row['nome'].'</label>';
+            echo ' | <input type="number" name="quantidade['.$row['idproduto'].']" class="quantidade" min="1" max="10" value="'.$quantidade.'" '.($checked ? '' : 'disabled').'> unidades';
             echo '</div>';
+            }
         }
     }
-  }
+
+
 
 	public function getProdutosPorCesta($idcestaBasica)
-	{
+{
     $produtos = [];
-    $query = "SELECT produto_idproduto FROM `cestabasica_has_produto` WHERE `cestaBasica_idcestaBasica` = '$idcestaBasica'";
+    $query = "SELECT produto_idproduto, quantidade FROM `cestabasica_has_produto` WHERE `cestaBasica_idcestaBasica` = '$idcestaBasica'";
     $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 
     while ($row = mysqli_fetch_assoc($result)) {
-        $produtos[] = $row['produto_idproduto'];
+        $produtos[$row['produto_idproduto']] = $row['quantidade']; // Adiciona o ID do produto como chave e a quantidade como valor
     }
 
     return $produtos; 
-	}
+    }
+
 	
  	public function InsertProdutos($nomeProduto, $descricao, $valor, $quantidade, $ativo){
 
@@ -173,7 +181,9 @@ class Produtos extends Connect
 		 
 	  header('Location: ../../views/produto/');
 	}
+    
 
 }
 
  $produtos = new Produtos;
+

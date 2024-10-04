@@ -50,6 +50,9 @@ echo'
               <div class="box-body">
                 <div class="form-group">
 
+                  <label for="exampleInputEmail1">ID da Cesta</label>
+                  <input type="text" name="idcestaBasica" class="form-control" id="exampleInputEmail1" value="'.$resp['Cestas']['idcestaBasica'].'" readonly>
+
                   <label for="exampleInputEmail1">Nome da Cesta</label>
                   <input type="text" name="nomecesta" class="form-control" id="exampleInputEmail1" placeholder="Nome Cesta" value="'.$resp['Cestas']['nome'].'" maxlength="45">
                 
@@ -57,7 +60,7 @@ echo'
                   <input type="text" name="descricao" class="form-control" id="exampleInputEmail1" placeholder="Descrição" value="'.$resp['Cestas']['descricao'].'" maxlength="45">
 
                   <label for="exampleInputEmail1">Valor</label>
-                  <input type="text" name="valor" class="form-control" id="exampleInputEmail1" placeholder="R$" value="'.$resp['Cestas']['valor'].'">
+                  <input type="text" name="valor" class="form-control" id="exampleInputEmail1" placeholder="R$" value="'.$resp['Cestas']['valor'].'" oninput="mascaraValor(this)" onchange="validarValorFinal(this)">
 
                   <label for="exampleInputEmail1">Categoria Cesta</label>
                   <select name="codCesta" class="form-control" id="categoria">';
@@ -99,3 +102,45 @@ echo '</div>';
 echo  $footer;
 echo $javascript;
 ?>
+
+<script>
+function verificarSelecionados() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const quantidades = document.querySelectorAll('.quantidade');
+    let totalSelecionados = 0;
+
+    checkboxes.forEach((checkbox, index) => {
+        if (checkbox.checked) {
+            quantidades[index].disabled = false;
+            totalSelecionados++;
+        } else {
+            quantidades[index].disabled = true;
+            quantidades[index].value = 1; // Reseta o valor da quantidade quando desmarcar
+        }
+    });
+
+    // Atualiza o contador de itens selecionados
+    document.getElementById('totalSelecionados').textContent = totalSelecionados;
+
+    // Se mais de 10 itens estiverem selecionados, desabilita os outros checkboxes
+    if (totalSelecionados >= 10) {
+        checkboxes.forEach(checkbox => {
+            if (!checkbox.checked) {
+                checkbox.disabled = true;
+            }
+        });
+    } else {
+        checkboxes.forEach(checkbox => {
+            checkbox.disabled = false;
+        });
+    }
+}
+
+// Adiciona um evento que chama a função toda vez que um checkbox é alterado
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', verificarSelecionados);
+});
+
+// Chama a função logo ao carregar a página para garantir que o estado inicial esteja correto
+document.addEventListener('DOMContentLoaded', verificarSelecionados);
+</script>

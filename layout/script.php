@@ -499,7 +499,25 @@ function mascaraValor(input) {
 
   // Atualiza o valor do input com a máscara de moeda
   input.value = "R$ " + value;
-}
+};
+
+function validarValorFinal(input) {
+    // Remove os caracteres não numéricos para fazer a comparação
+    let valorNumerico = parseFloat(input.value.replace("R$ ", "").replace(/\./g, "").replace(",", "."));
+    
+    if (valorNumerico > 10000) {
+        // Define o valor máximo como R$ 10.000,00
+        input.value = "R$ 10.000,00";
+        alert("O valor máximo permitido é R$ 10.000,00.");
+    } else if (valorNumerico < 0) {
+        // Corrige valores negativos para R$ 0,00
+        input.value = "R$ 0,00";
+        alert("O valor não pode ser negativo.");
+    } else {
+        // Aplica a máscara de valor corretamente ao valor final
+        mascaraValor(input);
+    }
+};
 
 function removerEspacos() {
     // Seleciona todos os inputs de texto
@@ -507,6 +525,6 @@ function removerEspacos() {
     inputs.forEach(function(input) {
         input.value = input.value.trim(); // Remove os espaços em branco no início e no final
     });
-}
+};
 
 </script>

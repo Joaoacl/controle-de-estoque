@@ -18,6 +18,21 @@ class Enderecos extends Connect
         }
     }
 
+    public function updateEndereco($rua, $numero, $bairro, $cidade, $estado, $cep, $idendereco)
+    {
+    $query = "UPDATE `endereco` 
+              SET `rua` = '$rua', `numero` = '$numero', `bairro` = '$bairro', 
+                  `cidade` = '$cidade', `estado` = '$estado', `cep` = '$cep' 
+              WHERE `idendereco` = '$idendereco'";
+
+    if (mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))) {
+        return true; // Retorna true se a atualização for bem-sucedida
+    } else {
+        return false; // Retorna false se ocorrer algum erro
+    }
+    }
+
+
     public function listEnderecos($value = NULL)
     {
         $query = "SELECT * FROM `endereco`";
