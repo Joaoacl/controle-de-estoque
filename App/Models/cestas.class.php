@@ -34,29 +34,9 @@
                           <i class="fa fa-ellipsis-v"></i>
                           <i class="fa fa-ellipsis-v"></i>
                         </span>
-                    <span class="text">
-                    
-                    <!-- todo text -->
-                    <span class="badge left text">'.$row['idcestaBasica'].'</span>
-                    <span class="left text">'.$row['nome_cesta'].'</span> </span> 
-                    | '.$row['descricao'].'
-                    | VALOR: <strong>' . $row['valor'] . '</strong> 
-                    | CATEGORIA: <strong>'.$row['nome_categoria'].'</strong>                      
-                    </span>';
-  
-              // Verificar se `public` é igual a 1
-              if ($row['public'] == 1) {
-                  echo '
-                    <!-- General tools such as edit or delete-->
-                    <div class="tools d-flex justify-content-around">
-                      <a href="editcesta.php?id='.$row['idcestaBasica'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
-  
-                      <a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcestaBasica'] . '" title="Excluir">
-                        <i class="fa fa-trash-o fa-lg"></i>
-                      </a>
-  
-                      <!-- Modal -->
-                      <div class="modal" id="deleteModal' . $row['idcestaBasica'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idcestaBasica'] . '" aria-hidden="true" >
+
+                         <!-- Modal -->
+                      <div class="modal fade" id="deleteModal' . $row['idcestaBasica'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idcestaBasica'] . '" aria-hidden="true" >
                         <div class="modal-dialog" role="document">
                           <div class="modal-content">
                             <div class="modal-header">
@@ -78,6 +58,29 @@
                           </div>
                         </div>
                       </div>
+
+                    <span class="text">
+                    
+                    <!-- todo text -->
+                    <span class="badge left text">'.$row['idcestaBasica'].'</span>
+                    <span class="left text">'.$row['nome_cesta'].'</span> </span> 
+                    | '.$row['descricao'].'
+                    | VALOR: <strong>' . $row['valor'] . '</strong> 
+                    | CATEGORIA: <strong>'.$row['nome_categoria'].'</strong>                      
+                    </span>';
+  
+              // Verificar se `public` é igual a 1
+              if ($row['public'] == 1) {
+                  echo '
+                    <!-- General tools such as edit or delete-->
+                    <div class="tools d-flex justify-content-around">
+                      <a href="editcesta.php?id='.$row['idcestaBasica'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
+  
+                      <a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcestaBasica'] . '" title="Excluir">
+                        <i class="fa fa-trash-o fa-lg"></i>
+                      </a>
+  
+                     
   
                     </div>';
               }

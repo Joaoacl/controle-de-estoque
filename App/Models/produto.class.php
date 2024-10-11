@@ -24,6 +24,12 @@ class Produtos extends Connect
               }else{
                   $c = " ";
               }
+
+              if($row['quantidade'] < 10){
+                $q = 'class="text text-danger"';
+                }else{
+                $q = " ";
+                }
   
               echo '<li '.$c.'>
                     <!-- drag handle -->
@@ -31,26 +37,9 @@ class Produtos extends Connect
                           <i class="fa fa-ellipsis-v"></i>
                           <i class="fa fa-ellipsis-v"></i>
                         </span>
-                    
-                    <!-- todo text -->
-                    <span class="text"> '.$row['nome'].'</span>
-                    -<span class="text">'.$row['valor'].'</span>
-                    <span class="text">| Qtd: '.$row['quantidade'].'</span>
-                     <span class="text">| Descrição: '.$row['descricao'].'</span>';
-  
-              // Verificar se `public` é igual a 1
-              if ($row['public'] == 1) {
-                  echo '
-                  <!-- General tools such as edit or delete-->
-                  <div class="tools d-flex justify-content-around">
-                      <a href="editproduto.php?id='.$row['idproduto'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
-  
-                      <a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idproduto'] . '" title="Excluir">
-                          <i class="fa fa-trash-o fa-lg"></i>
-                      </a>
-  
-                      <!-- Modal -->
-                      <div class="modal" id="deleteModal' . $row['idproduto'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idproduto'] . '" aria-hidden="true" >
+
+                        <!-- Modal -->
+                      <div class="modal fade" id="deleteModal' . $row['idproduto'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idproduto'] . '" aria-hidden="true" >
                           <div class="modal-dialog" role="document">
                               <div class="modal-content">
                                   <div class="modal-header">
@@ -72,6 +61,26 @@ class Produtos extends Connect
                               </div>
                           </div>
                       </div>
+                    
+                    <!-- todo text -->
+                    <span class="text"> '.$row['idproduto'].'</span>
+                    <span class="text"> '.$row['nome'].' </span>
+                    -<span class="text">'.$row['valor'].' | </span>
+                    <span '.$q.' class="text"> Qtd: '.$row['quantidade'].'</span>
+                     <span class="text">| Descrição: '.$row['descricao'].'</span>';
+  
+              // Verificar se `public` é igual a 1
+              if ($row['public'] == 1) {
+                  echo '
+                  <!-- General tools such as edit or delete-->
+                  <div class="tools d-flex justify-content-around">
+                      <a href="editproduto.php?id='.$row['idproduto'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
+  
+                      <a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idproduto'] . '" title="Excluir">
+                          <i class="fa fa-trash-o fa-lg"></i>
+                      </a>
+  
+                      
                   </div>';
               }
   
@@ -155,11 +164,24 @@ class Produtos extends Connect
     	$result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 
     if ($result) {
+        $this->verificarEstoque($idproduto);
         header('Location: ../../views/produto/index.php?alert=1');
     } else {
         header('Location: ../../views/produto/index.php?alert=0');
     }
 	}
+
+    public function verificarEstoque($idproduto) {
+        $query = "SELECT nome, quantidade, quantidade_minima FROM `produto` WHERE `idproduto` = '$idproduto'";
+        $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+    
+        if ($produto = mysqli_fetch_assoc($result)) {
+            if ($produto['quantidade'] <= $produto['quantidade_minima']) {
+                // Adicione a lógica de notificação aqui, exemplo:
+                $_SESSION['notificacoes'][] = "O produto " . $produto['nome'] . " está com estoque baixo. Apenas " . $produto['quantidade'] . " unidades restantes.";
+            }
+        }
+    }
 	
 
 	public function deleteProduto($idproduto){

@@ -22,6 +22,7 @@ echo '<div class="content-wrapper">
     <section class="content">
     ';
     require '../../layout/alert.php';
+
     echo '
       <!-- Small boxes (Stat box) -->
       <div class="row">
@@ -44,13 +45,39 @@ echo '<div class="content-wrapper">
             <!-- /.box-header -->
             <div class="box-body">
               <ul class="todo-list">';
-               $clientes->index();
+              $btn_color = "btn-primary";
+              $icon = "fa fa-filter";
+
+              if(isset($_POST['ativo']) != NULL){               
+
+                $value = $_POST['ativo']; 
+                if($value == 1){
+                 
+                  $ativo = 0;
+                  $button_name = "Inativos";              
+      
+                }else{
+                  $ativo = 1;
+                  $button_name = "Publicados";
+                  $icon = "fa-check";
+                  $btn_color = "btn-primary";
+                }     
+      
+              }else{
+                $value = 1;
+                $ativo = 0;
+                $button_name = "Inativos";
+              }
+
+              $clientes->index($value);
               
         echo '</ul>
             </div>
             <!-- /.box-body -->
             <div class="box-footer clearfix no-border">
-              <a href="addcliente.php" type="button" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Add Cliente</a>
+              <a href="addcliente.php" type="button" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add Cliente</a>
+              <form action="index.php" method="post">
+              <button name="ativo" type="submit" value="'.$ativo.'" class="btn '.$btn_color.' pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button></form>
             </div>
           </div>
 	 

@@ -69,11 +69,9 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
                     ';
                     $produtos->listProdutosCheckbox();
                     echo '
-                    <p>Total de itens selecionados: <span id="totalSelecionados">0</span></p>
+                    
                   </form>
                 </div>
-
-
 
                 <input type="hidden" name="iduser" value="'.$idUsuario.'">
 

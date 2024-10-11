@@ -101,7 +101,7 @@ echo '
                   <input type="text" name="rua" class="form-control" id="exampleInputEmail1" placeholder="Rua" required maxlength="45">
 
                   <label for="exampleInputEmail1">Número *</label>
-                  <input type="text" name="numero" class="form-control" id="exampleInputEmail1" placeholder="Número" required maxlength="8">
+                  <input type="number" name="numero" class="form-control" id="exampleInputEmail1" placeholder="Número" required maxlength="8">
 
                   <label for="exampleInputEmail1">Bairro *</label>
                   <input type="text" name="bairro" class="form-control" id="exampleInputEmail1" placeholder="Bairro" required maxlength="45">
@@ -110,7 +110,7 @@ echo '
                   <input type="text" name="cidade" class="form-control" id="exampleInputEmail1" placeholder="Cidade" required maxlength="45">
 
                   <label for="exampleInputEmail1">Estado *</label>
-                  <input type="text" name="estado" class="form-control" id="exampleInputEmail1" placeholder="Ex: SP, MG, PR" required maxlength="2">
+                  <input type="text" name="estado" class="form-control" id="exampleInputEmail1" placeholder="Ex: SP, MG, PR" required maxlength="2" oninput="handleInput(event)">
 
                   <label for="exampleInputEmail1">CEP *</label>
                   <input type="text" name="cep" class="form-control" 
@@ -175,6 +175,14 @@ echo $javascript;
     // Campo de senha sem máscara, mas transformado em password (esconde os caracteres)
     function esconderSenha(input) {
         input.type = 'password';
+    };
+
+    function handleInput(e) {
+    var ss = e.target.selectionStart;
+    var se = e.target.selectionEnd;
+    e.target.value = e.target.value.toUpperCase();
+    e.target.selectionStart = ss;
+    e.target.selectionEnd = se;
     };
 
     // Máscara para CEP no formato 99999-999

@@ -1,7 +1,7 @@
 <?php
 
 /*
- Class Clientes
+ Class Usuarios
 */
 
  require_once 'connect.php';
@@ -10,28 +10,60 @@
   class Usuario extends Connect
  {
  	
- 	public function index($perm)
+ 	public function index($perm, $value)
  	{
         if($perm == 1){
-            $query = "SELECT *FROM `usuario`";
+            $query = "SELECT *FROM `usuario` WHERE `public` = 1 AND `ativo` = '$value'";
             $result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
 
                 while ($row = mysqli_fetch_array($result)) {
-                    echo '<li>
+
+                    if($row['ativo'] == 0){
+                        $c = 'class="label-warning"';
+                    }else{
+                        $c = " ";
+                    }
+
+                    echo '<li '.$c.'>
                      <!-- drag handle -->
                          <span class="handle">
                            <i class="fa fa-ellipsis-v"></i>
                            <i class="fa fa-ellipsis-v"></i>
                          </span>
+
+                          <!-- Modal -->
+                      <div class="modal fade" id="deleteModal' . $row['idusuario'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idusuario'] . '" aria-hidden="true" >
+                          <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title" id="deleteModalLabel' . $row['idusuario'] . '">Excluir Usuário</h5>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                      </button>
+                                  </div>
+                                  <div class="modal-body">
+                                      Você tem certeza que deseja excluir o usuário <strong>' . $row['nomeUsuario'] . '</strong>?
+                                  </div>
+                                  <div class="modal-footer">
+                                      <form action="../../App/Database/delusuario.php" method="POST">
+                                          <input type="hidden" name="idusuario" value="' . $row['idusuario'] . '">
+                                          <button type="button" name="upload" value="Cancelar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                          <button type="submit" name="upload" value="Cadastrar" class="btn btn-danger">Excluir</button>
+                                      </form>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
                      
                      <!-- todo text -->
+                     <span class="text badge btn-primary">'.$row['idusuario'].'</span>
                      <span class="text">'.$row['nomeUsuario'].'</span>
                      <span class=""> | Permissão:</span>';
                      
                      if($row['permissao'] == 1){
-                        echo '<span class="text badge">Administrador</span>';
+                        echo '<span class="text badge btn-success">Administrador</span>';
                      }else{
-                        echo '<span class="text badge">Vendedor</span>';
+                        echo '<span class="text badge btn-info">Vendedor</span>';
                      }
                      echo'
                      
@@ -42,7 +74,9 @@
                      <div class="tools">
                        <a href="editusuario.php?id='.$row['idusuario'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
 
-                       <i class="fa fa-trash-o"></i>
+                       <a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idusuario'] . '" title="Excluir">
+                          <i class="fa fa-trash-o fa-lg"></i>
+                      </a>
                      </div>
                    </li>';
                                     
@@ -51,11 +85,6 @@
         }else{
             return 0;
         }
-
- 		
- 		
-
- 
 
  	}
 
@@ -67,16 +96,16 @@
  		if($result){
  		
  			while ($row = mysqli_fetch_array($result)) {
-        if($value == $row['idcliente']){ 
-          $selected = "selected";
-        }else{
-          $selected = "";
-        }
- 				echo '<option value="'.$row['idcliente'].'" '.$selected.' >'.$row['nome'].'</option>';
- 			}
+                if($value == $row['idcliente']){ 
+                $selected = "selected";
+                }else{
+                $selected = "";
+                }
+                echo '<option value="'.$row['idcliente'].'" '.$selected.' >'.$row['nome'].'</option>';
+            }
 
- 	}
- }
+ 	    }
+    }
 
  	public function InsertUsuario($username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $enderecoId, $pt_file){
 
@@ -86,7 +115,7 @@
 
  			header('Location: ../../views/usuarios/index.php?alert=1');
  		}else{
-      die('Erro ao inserir usuário: ' . mysqli_error($this->SQL)); // Mostra o erro específico do MySQL
+            die('Erro ao inserir usuário: ' . mysqli_error($this->SQL)); // Mostra o erro específico do MySQL
  		}
  	}
 
@@ -198,6 +227,15 @@
           return false; // Falha
       }
   }
+
+  public function deleteUsuario($idusuario){
+        if(mysqli_query($this->SQL, "UPDATE `usuario` SET `public` = 0 WHERE `idusuario` = '$idusuario'") or die ( mysqli_error($this->SQL))){
+            header('Location: ../../views/usuarios/index.php?alert=deletado');
+        } else {
+            header('Location: ../../views/usuarios/index.php?alert=nao_deletado');
+        }
+    
+    }
 
   
 

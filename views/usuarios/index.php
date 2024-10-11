@@ -23,22 +23,6 @@ echo '<div class="content-wrapper">
     ';
     require '../../layout/alert.php';
    
-    
-    if (isset($_GET['alert'])) {
-      if ($_GET['alert'] == 'email_ja_existe') {
-          echo '<div class="alert alert-danger">Este email já está cadastrado!</div>';
-      } elseif ($_GET['alert'] == 'cpf_ja_existe') {
-          echo '<div class="alert alert-danger">CPF já cadastrado!</div>';
-      } elseif ($_GET['alert'] == 'campos_obrigatorios') {
-          echo '<div class="alert alert-danger">Preencha todos os campos obrigatórios!</div>';
-      } elseif ($_GET['alert'] == 'sucesso') {
-        echo '<div class="alert alert-success">Usuário adicionado com sucesso!</div>';
-      } elseif ($_GET['alert'] == 'update_sucesso') {
-        echo '<div class="alert alert-success">Usuário alterado com sucesso!</div>';
-      }
-
-  };
-  
     echo '
       <!-- Small boxes (Stat box) -->
       <div class="row">
@@ -62,7 +46,31 @@ echo '<div class="content-wrapper">
             <div class="box-body">
               <ul class="todo-list">';
               if($perm == 1){
-                $usuario->index($perm);
+                $btn_color = "btn-primary";
+              $icon = "fa fa-filter";
+
+              if(isset($_POST['ativo']) != NULL){               
+
+                $value = $_POST['ativo']; 
+                if($value == 1){
+                 
+                  $ativo = 0;
+                  $button_name = "Inativos";              
+      
+                }else{
+                  $ativo = 1;
+                  $button_name = "Publicados";
+                  $icon = "fa-check";
+                  $btn_color = "btn-primary";
+                }     
+      
+              }else{
+                $value = 1;
+                $ativo = 0;
+                $button_name = "Inativos";
+              }
+                     
+                $usuario->index($perm, $value);
               }else{
                 echo'Você não possui acesso!';
               }
@@ -73,6 +81,8 @@ echo '<div class="content-wrapper">
             <!-- /.box-body -->
             <div class="box-footer clearfix no-border">
               <a href="addusuarios.php" type="button" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add Usuário</a>
+              <form action="index.php" method="post">
+              <button name="ativo" type="submit" value="'.$ativo.'" class="btn '.$btn_color.' pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button></form>
             </div>
           </div>
 	 

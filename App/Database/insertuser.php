@@ -9,7 +9,7 @@ $connect = new Connect(); // Instancia a conexão
 
 // Função para tratar o upload de imagem
 function salvarImagem($imagem) {
-    $diretorio = 'dist/img/'; // Diretório para salvar a imagem
+    $diretorio = '../../views/dist/img/'; // Diretório para salvar a imagem
     $nomeArquivo = basename($imagem['name']); // Nome do arquivo
     $caminhoCompleto = $diretorio . $nomeArquivo; // Caminho completo para salvar
 
@@ -20,12 +20,14 @@ function salvarImagem($imagem) {
         if (move_uploaded_file($imagem['tmp_name'], $caminhoCompleto)) {
             return $nomeArquivo; // Retorna o nome do arquivo se o upload for bem-sucedido
         } else {
+            echo "Erro ao mover o arquivo: " . $imagem['tmp_name'] . " para " . $caminhoCompleto;
             return false; // Retorna false se houver erro ao mover o arquivo
         }
     } else {
+        echo "O arquivo não é uma imagem válida.";
         return false; // Retorna false se o arquivo não for uma imagem válida
     }
-}
+};
 
 function emailJaExiste($email, $conexao, $idusuario = null) {
     // Ajusta a consulta para excluir o email do próprio usuário que está sendo atualizado
@@ -44,7 +46,7 @@ function emailJaExiste($email, $conexao, $idusuario = null) {
     $stmt->execute();
     $resultado = $stmt->get_result();
     return $resultado->num_rows > 0;
-}
+};
 
 
 if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
@@ -59,6 +61,8 @@ if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
     $telefone = $_POST['telefone'];
     $permissao = $_POST['permissao'];
     $ativo = $_POST['ativo'];
+    $arquivo = $_FILES['arquivo'];
+    //$imagem = $_POST['arquivo'];
 
     // Endereço
     $rua = $_POST['rua'];
@@ -89,21 +93,33 @@ if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
                 header('Location: ../../views/usuarios/index.php?alert=cpf_ja_existe');
             } else {
                 // Tratar o upload da imagem
-                if (isset($_FILES['arquivo']) && $_FILES['arquivo']['error'] == 0) {
-                    // Tenta salvar a nova imagem
-                    $nomeimagem = salvarImagem($_FILES['arquivo']);
-                    if (!$nomeimagem) {
-                        // Se a imagem não foi salva corretamente, define uma imagem padrão
-                        $nomeimagem = 'dist/img/avatar.png';
-                    }
-                } elseif (isset($_POST['imagem_atual']) && $_POST['imagem_atual'] != '') {
-                    // Se nenhum arquivo foi enviado, mas o usuário já tem uma imagem existente, mantenha essa imagem
-                    $nomeimagem = $_POST['imagem_atual'];
-                } else {
-                    // Se nenhuma imagem foi enviada ou definida, use a imagem padrão
-                    $nomeimagem = 'dist/img/avatar.png';
-                }
+                if (isset($arquivo) && !file_exists('../../views/dist/img/' . $arquivo['name'])) {       
+        $destino = '../../views/dist/img/' . $arquivo['name']; // Caminho completo para salvar a imagem
+        $arquivo_tmp = $arquivo['tmp_name']; // Caminho temporário do arquivo
 
+        // Verifica se há um arquivo válido e se ele é uma imagem
+        if (!empty($arquivo_tmp)) {
+            // Mover o arquivo para o destino
+            if (move_uploaded_file($arquivo_tmp, $destino)) {
+                chmod($destino, 0644); // Definir permissões
+                $nomeimagem = 'dist/img/' . $arquivo['name']; // Caminho da imagem para salvar no banco
+            } else {
+                // Caso ocorra um erro ao mover o arquivo
+                echo "Erro ao mover o arquivo: " . $arquivo_tmp . " para " . $destino;
+                $nomeimagem = 'dist/img/avatar.png'; // Caminho padrão se o upload falhar
+            }
+        } else {
+            // Caso não haja imagem enviada
+            $nomeimagem = 'dist/img/avatar.png';
+        }
+
+    } elseif ($_POST['valor'] != NULL) {
+        // Caso uma imagem já exista ou o valor da imagem seja passado via POST
+        $nomeimagem = $_POST['valor'];
+    } else {
+        // Se nenhuma imagem for enviada, define um avatar padrão
+        $nomeimagem = 'dist/img/avatar.png';
+    }
                 // Se existir idusuario, realiza o update
                 if ($idusuario) {
                     

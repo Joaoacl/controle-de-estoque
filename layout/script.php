@@ -1,5 +1,17 @@
 <?php
 
+// Inicializando o array de notificações se ele não existir
+if (!isset($_SESSION['notificacoes'])) {
+  $_SESSION['notificacoes'] = [];
+}
+// Verifica se o botão de limpar notificações foi clicado
+if (isset($_POST['limpar_notificacoes'])) {
+  // Limpa as notificações
+  $_SESSION['notificacoes'] = [];
+}
+
+$contagemNotificacoes = count($_SESSION['notificacoes']);
+
 $url = 'http://localhost/controlestoque/views/';
 
 $head = '<!DOCTYPE html>
@@ -45,7 +57,9 @@ $head = '<!DOCTYPE html>
   <![endif]-->
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">';
+<div class="wrapper">
+
+';
 
 $header = '<header class="main-header">
     <!-- Logo -->
@@ -62,52 +76,16 @@ $header = '<header class="main-header">
         <span class="sr-only">Toggle navigation</span>
       </a>
 
+
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
-          
+          <li class="dropdown notification">
           <!-- Notifications: style can be found in dropdown.less -->
-          <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="header">You have 10 notifications</li>
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-warning text-yellow"></i> Very long description here that may not fit into the
-                      page and may cause design problems
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-red"></i> 5 new members joined
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-shopping-cart text-green"></i> 25 sales made
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-user text-red"></i> You changed your username
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="footer"><a href="#">View all</a></li>
-            </ul>
+          <a class="dropdown-toggle open" style="cursor: pointer;" data-toggle="modal" data-target="#globalModal">
+            <i class="fa fa-bell" aria-hidden="true"></i>
+            Notificações <span class="badge btn-warning">' . $contagemNotificacoes . '</span>
+          </a>
           </li>
-          
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -484,6 +462,68 @@ $javascript = '
 
 ?>
 
+<div id="globalModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Notificações de Estoque Baixo</h4>
+      </div>
+      <div class="modal-body">
+        <?php
+        if ($contagemNotificacoes > 0): ?>
+            <ul class="notification-list">
+              <?php foreach ($_SESSION['notificacoes'] as $notificacao): ?>
+                <li>
+                  <i class="fa fa-exclamation-circle notification-icon"></i>
+                  <?php echo $notificacao; ?>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p>Sem notificações.</p>
+        <?php endif; ?>
+      </div>
+      <div class="modal-footer">
+        <form method="post" action="">
+            <button type="submit" name="limpar_notificacoes" class="btn btn-danger float-right">Limpar Notificações</button>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<style>
+
+.notification-list {
+    list-style-type: none; /* Remove o estilo padrão da lista */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margem */
+}
+
+.notification-list li {
+    padding: 10px 0; /* Espaçamento entre itens */
+    display: flex;
+    align-items: center; /* Alinha ícone com o texto */
+    border-bottom: 1px solid #ddd; /* Linha separadora */
+}
+
+.notification-list li:last-child {
+    border-bottom: none; /* Remove linha do último item */
+}
+
+.notification-icon {
+    color: #f39c12; /* Cor laranja para destaque */
+    margin-right: 10px; /* Espaço entre ícone e texto */
+}
+
+.notification-list strong {
+    color: #333; /* Destaca texto */
+}
+
+</style>
 
 <script>
 function mascaraValor(input) {

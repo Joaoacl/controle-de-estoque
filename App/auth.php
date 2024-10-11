@@ -9,4 +9,5 @@ if (!isset($_SESSION["idUsuario"]) || !isset($_SESSION["usuario"])) {
     $username   = $_SESSION["usuario"];
     $perm       = $_SESSION["perm"];
     $foto      = $_SESSION["foto"];
+    
 }

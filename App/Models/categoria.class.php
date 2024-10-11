@@ -29,25 +29,9 @@
                         <i class="fa fa-ellipsis-v"></i>
                         <i class="fa fa-ellipsis-v"></i>
                       </span>
-                
-                  <!-- todo text -->
-                  <span class="text"> '.$row['nome'].'</span>';
-				  
-				  if ($row['public'] == 1) {
-                  echo '
-					<!-- Emphasis label -->
-					<!-- <small class="label label-danger"><i class="fa fa-clock-o"></i> 2 mins</small> -->
-					<!-- General tools such as edit or delete-->
-					<div class="tools d-flex justify-content-around">
-						<a href="editcategoria.php?id='.$row['idcategoriaCesta'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
-						
-						<a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcategoriaCesta'] . '" title="Excluir">
-						<i class="fa fa-trash-o fa-lg"></i>
-						</a>
 
-				
-					<!-- Modal -->
-						<div class="modal" id="deleteModal' . $row['idcategoriaCesta'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idcategoriaCesta'] . '" aria-hidden="true" >
+					  <!-- Modal -->
+						<div class="modal fade" id="deleteModal' . $row['idcategoriaCesta'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idcategoriaCesta'] . '" aria-hidden="true" >
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 							<div class="modal-header">
@@ -69,6 +53,24 @@
 							</div>
 						</div>
 						</div>
+                
+                  <!-- todo text -->
+                  <span class="text"> '.$row['nome'].'</span>';
+				  
+				  if ($row['public'] == 1) {
+                  echo '
+					<!-- Emphasis label -->
+					<!-- <small class="label label-danger"><i class="fa fa-clock-o"></i> 2 mins</small> -->
+					<!-- General tools such as edit or delete-->
+					<div class="tools d-flex justify-content-around">
+						<a href="editcategoria.php?id='.$row['idcategoriaCesta'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
+						
+						<a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcategoriaCesta'] . '" title="Excluir">
+						<i class="fa fa-trash-o fa-lg"></i>
+						</a>
+
+				
+					
 
 					</div>';
 				  }
