@@ -188,9 +188,9 @@ $aside = '<aside class="main-sidebar">
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/forms/general.html"><i class="fa fa-circle-o"></i> Lista de Fornecedores</a></li>
-            <li><a href="pages/forms/advanced.html"><i class="fa fa-circle-o"></i> Add Fornecedor</a></li>
-            <li><a href="pages/forms/editors.html"><i class="fa fa-circle-o"></i> Editors</a></li>
+            <li><a href="'.$url.'fornecedor/"><i class="fa fa-truck"></i> Lista de Fornecedores</a></li>
+            <li><a href="'.$url.'fornecedor/addfornecedor.php"><i class="fa fa-plus"></i> Add Fornecedor</a></li>
+            
           </ul>
         </li>
         <li class="treeview">
