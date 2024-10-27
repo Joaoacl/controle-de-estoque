@@ -84,7 +84,7 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
                 </div>
 
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Valor Total</label>
+                  <label for="exampleInputEmail1">Valor Total (R$)</label>
                   <input type="text" name="valorTotal" class="form-control" id="valorTotalDesconto" placeholder="R$" oninput="mascaraValor(this)" onchange="validarValorFinal(this)" required>
                 </div>
 
@@ -170,7 +170,7 @@ function carregarDadosCliente(idCliente) {
             const valorComDesconto = valorCesta - (valorCesta * (desconto / 100));
 
             // Atualizar o campo de valor total com o valor calculado
-            document.getElementById('valorTotalDesconto').value = `R$ ${valorComDesconto.toFixed(2).replace(".", ",")}`;
+            document.getElementById('valorTotalDesconto').value = `${valorComDesconto.toFixed(2).replace(".", ",")}`;
         })
         .catch(error => console.error('Erro ao carregar dados do cliente:', error));
     }

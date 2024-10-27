@@ -79,6 +79,7 @@ $header = '<header class="main-header">
 
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
+
           <li class="dropdown notification">
           <!-- Notifications: style can be found in dropdown.less -->
           <a class="dropdown-toggle open" style="cursor: pointer;" data-toggle="modal" data-target="#globalModal">
@@ -86,6 +87,7 @@ $header = '<header class="main-header">
             Notificações <span class="badge btn-warning">' . $contagemNotificacoes . '</span>
           </a>
           </li>
+          
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">

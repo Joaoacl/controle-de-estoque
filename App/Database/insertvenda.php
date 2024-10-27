@@ -1,23 +1,28 @@
 <?php
 require_once '../auth.php';
 require_once '../Models/venda.class.php';
+require_once '../Models/cestas.class.php';
 
 if (isset($_POST['upload']) && $_POST['upload'] == 'Cadastrar') {
-    $cliente = trim($_POST['cliente']);
-    $data = $_POST['data'];
-    $valor_total = $_POST['valor_total'];
-    $ativo = isset($_POST['ativo']) ? $_POST['ativo'] : 1;
-
+    $idCesta = $_POST['codCesta'];
+    $cliente = $_POST['codCli'];
+    $valor_total = $_POST['valorTotal'];
+    $data_venda = $_POST['dataVenda'];
+    
+    
     if ($cliente != NULL) {
         if (isset($_POST['idvenda'])) {
             $idvenda = $_POST['idvenda'];
-            $vendas->updateVenda($idvenda, $cliente, $data, $valor_total, $ativo);
+            $vendas->updateVenda($idvenda, $idCesta, $cliente, $valor_total, $data);
         } else {
-            $idvenda = $vendas->InsertVenda($cliente, $data, $valor_total, $ativo);
+            $idvenda = $vendas->InsertVenda($cliente, $valor_total, $data_venda, $idCesta);
             if ($idvenda) {
-                header('Location: ../../views/vendas/index.php?alert=1');
+
+                $cestas->InsertCestaVendida($idCesta, $idvenda, $data_venda);            
+
+                header('Location: ../../views/vendas/index.php?alert=venda_realizada');
             } else {
-                header('Location: ../../views/vendas/index.php?alert=0');
+                header('Location: ../../views/vendas/index.php?alert=estoque_insuficiente');
             }
         }
     } else {

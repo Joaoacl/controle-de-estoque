@@ -202,6 +202,17 @@
       // Redireciona para a página de visualização das cestas
       header('Location: ../../views/cestabasica/index.php?alert=1');
   }
+
+  public function InsertCestaVendida($idCesta, $idvenda, $data_venda)
+  {
+      $query = "INSERT INTO `cestabasica_has_venda`(`cestaBasica_idcestaBasica`, `venda_idvenda`, `quantidade`, `dataVenda`) VALUES ('$idCesta','$idvenda', '1', '$data_venda')";
+        if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
+
+          header('Location: ../../views/vendas/index.php?alert=1');
+        }else{
+          header('Location: ../../views/vendas/index.php?alert=0');
+        }
+  }
   
 
   public function deleteCestas($idcestaBasica)
@@ -221,20 +232,6 @@
     }
   }
 
-  /*
-  public function QuantItensVend($value, $idItens)
-  { 
-    $query = "UPDATE `itens` SET `QuantItensVend` = '$value' WHERE `idItens`= '$idItens'";
-    
-    if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
-
-      header('Location: ../../views/itens/index.php?alert=1');
-    }else{
-      header('Location: ../../views/itens/index.php?alert=0');
-    }
-  }
-    */
-
   public function cestasAtivo($value, $idcestaBasica)
   {
 
@@ -244,33 +241,6 @@
     $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
        
     header('Location: ../../views/cestabasica/');
-    /*
-
-    $this->queryAtivo = "SELECT `Ativo` FROM `itens` WHERE `idItens`= '$idItens'";
-    $this->resultAtivo = mysqli_query($this->SQL, $this->queryAtivo) or die ( mysqli_error($this->SQL));
-      
-      if($rep = mysqli_fetch_array($this->resultAtivo)) {
-       $valueResp = $rep['Ativo'];
-      } 
-
-    switch ($valueResp) {
-      case 1:
-          $value = 0;
-        break;
-      case 0:
-          $value = 1;
-        break;      
-     
-   }
-
-    
-    $this->query = "UPDATE `itens` SET `Ativo` = '$value' WHERE `idItens`= '$idItens'";
-    if($this->result = mysqli_query($this->SQL, $this->query) or die(mysqli_error($this->SQL))){
-
-      header('Location: ../../views/itens/index.php?alert=1');
-    }else{
-      header('Location: ../../views/itens/index.php?alert=0');
-    }*/
   
   }//ItensAtivo
 

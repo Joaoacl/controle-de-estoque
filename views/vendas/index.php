@@ -44,9 +44,7 @@ echo '<div class="content-wrapper">
             <!-- /.box-header -->
             <div class="box-body">
               <ul class="todo-list">';
-              
-            
-              
+                          
               $vendas->index();
               
         echo '</ul>

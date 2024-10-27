@@ -109,8 +109,6 @@
 			}else{
 				header('Location: ../../views/fornecedor/index.php?alert=0');
 			}
-
-
 	}
 
 	public function editFornecedor($idfornecedor)

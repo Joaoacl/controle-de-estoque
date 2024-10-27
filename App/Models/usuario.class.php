@@ -22,6 +22,10 @@
                         <tr>
                             <th>ID</th>
                             <th>Nome do Usuário</th>
+                            <th>Email</th>
+                            <th>Telefone</th>
+                            <th>Cargo</th>                 
+                            <th>Salário</th>
                             <th>Permissão</th>
                             <th>Ativo</th>
                             <th>Opções</th>
@@ -36,6 +40,10 @@
                     echo '<tr ' . $ativo_class . '>';
                     echo '<td>' . $row['idusuario'] . '</td>';
                     echo '<td>' . $row['nomeUsuario'] . '</td>';
+                    echo '<td>' . $row['email'] . '</td>';
+                    echo '<td>' . $row['telefone'] . '</td>';
+                    echo '<td>' . $row['cargo'] . '</td>';
+                    echo '<td>' . $row['salario'] . '</td>';
                     echo '<td><span class="badge ' . ($row['permissao'] == 1 ? 'btn-success' : 'btn-info') . '">' . $permissao . '</span></td>';
                     echo '<td>' . ($row['ativo'] == 1 ? 'Sim' : 'Não') . '</td>';
     

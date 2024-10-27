@@ -86,24 +86,42 @@ class Produtos extends Connect
     $result = mysqli_query($this->SQL, $query) or die (mysqli_error($this->SQL));
 
     if($result) {
+        echo '<table class="table table-bordered">';
+        echo '<thead>
+                <tr>
+                    <th>Selecionar</th>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                </tr>
+            </thead>';
+        echo '<tbody>';
+
         while ($row = mysqli_fetch_array($result)) {
             // Verificar se o produto está na cesta (caso seja edição)
             $checked = array_key_exists($row['idproduto'], $produtosSelecionados) ? "checked" : "";
             $quantidade = $checked ? $produtosSelecionados[$row['idproduto']] : 1;
 
-            echo '<div class="form-check">';
-            echo '<input class="form-check-input" type="checkbox" name="produtos[]" value="'.$row['idproduto'].'" onchange="verificarSelecionados()" '.$checked.'>';
-            echo ' <label class="form-check-label">'.$row['nome'].'</label>';
-            echo ' | <input type="number" name="quantidade['.$row['idproduto'].']" class="quantidade" min="1" max="10" value="'.$quantidade.'" '.($checked ? '' : 'disabled').'> unidades';
-            echo '</div>';
+          
+            // Supondo que você esteja em um loop para listar produtos
+            echo '<tr>';
+            echo '<td><input class="form-check-input" type="checkbox" name="produtos[]" value="'.$row['idproduto'].'" onchange="verificarSelecionados()" '.$checked.'></td>';
+            echo '<td><label class="form-check-label">'.$row['nome'].'</label></td>';
+            echo '<td><input type="number" name="quantidade['.$row['idproduto'].']" class="quantidade" min="1" max="10" value="'.$quantidade.'" '.($checked ? '' : 'disabled').'> unidades</td>';
+            echo '</tr>';
+
+            
+            
             }
+
+            echo '</tbody>';
+            echo '</table>';
         }
     }
 
 
 
 	public function getProdutosPorCesta($idcestaBasica)
-{
+    {
     $produtos = [];
     $query = "SELECT produto_idproduto, quantidade FROM `cestabasica_has_produto` WHERE `cestaBasica_idcestaBasica` = '$idcestaBasica'";
     $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
@@ -122,7 +140,7 @@ class Produtos extends Connect
 		
  		$query = "INSERT INTO `produto`(`idproduto`, `nome`, `valor`, `quantidade`, `descricao`, `public`, `ativo`) VALUES (NULL,'$nomeProduto', '$valor', '$quantidade', '$descricao', '1', '$ativo')";
  		if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
-
+            $this->verificarEstoque($idproduto);
  			header('Location: ../../views/produto/index.php?alert=1');
  		}else{
  			header('Location: ../../views/produto/index.php?alert=0');
@@ -156,7 +174,7 @@ class Produtos extends Connect
 
     if ($result) {
         $this->verificarEstoque($idproduto);
-        header('Location: ../../views/produto/index.php?alert=1');
+        header('Location: ../../views/produto/index.php?alert=update_sucesso');
     } else {
         header('Location: ../../views/produto/index.php?alert=0');
     }
