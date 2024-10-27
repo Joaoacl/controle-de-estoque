@@ -152,6 +152,20 @@ $aside = '<aside class="main-sidebar">
 
         <li class="treeview">
           <a href="#">
+            <i class="fa fa-shopping-cart"></i>
+            <span>Vendas</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="'.$url.'vendas/"><i class="fa fa-shopping-cart"></i>Vendas</a></li>
+            <li><a href="'.$url.'vendas/addvenda.php"><i class="fa fa-cart-plus"></i>Fazer Venda</a></li>
+          </ul>
+        </li>
+
+        <li class="treeview">
+          <a href="#">
             <i class="fa fa-shopping-basket"></i>
             <span>Cestas Básicas</span>
             <span class="pull-right-container">
@@ -538,7 +552,7 @@ function mascaraValor(input) {
   value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
 
   // Atualiza o valor do input com a máscara de moeda
-  input.value = "R$ " + value;
+  input.value = value;
 };
 
 function validarValorFinal(input) {

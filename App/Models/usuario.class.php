@@ -10,28 +10,40 @@
   class Usuario extends Connect
  {
  	
- 	public function index($perm, $value)
- 	{
-        if($perm == 1){
-            $query = "SELECT *FROM `usuario` WHERE `public` = 1 AND `ativo` = '$value'";
-            $result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
-
+    public function index($perm, $value)
+    {
+        if ($perm == 1) {
+            $query = "SELECT * FROM `usuario` WHERE `public` = 1 AND `ativo` = '$value'";
+            $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+    
+            if ($result) {
+                echo '<table class="table table-striped">';
+                echo '<thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome do Usuário</th>
+                            <th>Permissão</th>
+                            <th>Ativo</th>
+                            <th>Opções</th>
+                        </tr>
+                      </thead>';
+                echo '<tbody>';
+    
                 while ($row = mysqli_fetch_array($result)) {
-
-                    if($row['ativo'] == 0){
-                        $c = 'class="label-warning"';
-                    }else{
-                        $c = " ";
-                    }
-
-                    echo '<li '.$c.'>
-                     <!-- drag handle -->
-                         <span class="handle">
-                           <i class="fa fa-ellipsis-v"></i>
-                           <i class="fa fa-ellipsis-v"></i>
-                         </span>
-
-                          <!-- Modal -->
+                    $ativo_class = ($row['ativo'] == 0) ? 'class="label-warning"' : '';
+                    $permissao = ($row['permissao'] == 1) ? 'Administrador' : 'Vendedor';
+    
+                    echo '<tr ' . $ativo_class . '>';
+                    echo '<td>' . $row['idusuario'] . '</td>';
+                    echo '<td>' . $row['nomeUsuario'] . '</td>';
+                    echo '<td><span class="badge ' . ($row['permissao'] == 1 ? 'btn-success' : 'btn-info') . '">' . $permissao . '</span></td>';
+                    echo '<td>' . ($row['ativo'] == 1 ? 'Sim' : 'Não') . '</td>';
+    
+                    echo '<td>
+                            <a href="editusuario.php?id=' . $row['idusuario'] . '" class="btn btn-primary btn-sm">Editar</a>
+                            <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idusuario'] . '">Excluir</button>
+    
+                        <!-- Modal -->
                       <div class="modal fade" id="deleteModal' . $row['idusuario'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idusuario'] . '" aria-hidden="true" >
                           <div class="modal-dialog" role="document">
                               <div class="modal-content">
@@ -54,39 +66,18 @@
                               </div>
                           </div>
                       </div>
-                     
-                     <!-- todo text -->
-                     <span class="text badge btn-primary">'.$row['idusuario'].'</span>
-                     <span class="text">'.$row['nomeUsuario'].'</span>
-                     <span class=""> | Permissão:</span>';
-                     
-                     if($row['permissao'] == 1){
-                        echo '<span class="text badge btn-success">Administrador</span>';
-                     }else{
-                        echo '<span class="text badge btn-info">Vendedor</span>';
-                     }
-                     echo'
-                     
-                     <!-- Emphasis label -->
-                     <!-- <small class="label label-danger"><i class="fa fa-clock-o"></i> 2 mins</small> -->
-
-                     <!-- General tools such as edit or delete-->
-                     <div class="tools">
-                       <a href="editusuario.php?id='.$row['idusuario'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
-
-                       <a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idusuario'] . '" title="Excluir">
-                          <i class="fa fa-trash-o fa-lg"></i>
-                      </a>
-                     </div>
-                   </li>';
-                                    
+                          </td>';
+                    echo '</tr>';
                 }
-                
-        }else{
+    
+                echo '</tbody>';
+                echo '</table>';
+            }
+        } else {
             return 0;
         }
-
- 	}
+    }
+    
 
  	public function listClientes($value = NULL){
 

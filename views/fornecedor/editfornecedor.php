@@ -38,7 +38,7 @@ echo'
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header with-border">
-              <h3 class="box-title">Usuário</h3>
+              <h3 class="box-title">Fornecedor</h3>
             </div>
             <!-- /.box-header -->
             <!-- form start -->
@@ -66,7 +66,7 @@ echo'
                    <label for="banco">Número do Banco *</label>
                   <input type="text" name="banco" class="form-control" id="banco" placeholder="Número Conta Bancária" value="' . $resp['Fornecedor']['banco'] . '" maxlength="3" required>
     
-                  <label for="ativo">Status do Usuário *</label>
+                  <label for="ativo">Status do Fornecedor *</label>
                   <select name="ativo" class="form-control" id="ativo">
                     <option value="1" ' . ($resp['Fornecedor']['ativo'] == 1 ? 'selected' : '') . '>Ativo</option>
                     <option value="0" ' . ($resp['Fornecedor']['ativo'] == 0 ? 'selected' : '') . '>Inativo</option>
@@ -108,7 +108,7 @@ echo'
 
               <div class="box-footer">
                 <button type="submit" name="upload" class="btn btn-primary" value="Cadastrar">Alterar</button>
-                <a class="btn btn-danger" href="../../views/clientes">Cancelar</a>
+                <a class="btn btn-danger" href="../../views/fornecedor">Cancelar</a>
               </div>
             </form>
           </div>

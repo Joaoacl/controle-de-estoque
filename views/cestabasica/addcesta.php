@@ -50,7 +50,7 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
                 </div>
 
                  <div class="form-group">
-                  <label for="exampleInputEmail1">Valor</label>
+                  <label for="exampleInputEmail1">Valor (R$)</label>
                   <input type="text" name="valor" class="form-control" id="exampleInputEmail1" placeholder="R$" oninput="mascaraValor(this)" onchange="validarValorFinal(this)" required>
                 </div>
 

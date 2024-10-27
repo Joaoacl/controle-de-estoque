@@ -10,28 +10,39 @@
   class Clientes extends Connect
  {
  	
- 	public function index($value)
- 	{
- 		$query = "SELECT *FROM `cliente` WHERE `public` = 1 AND `ativo` = '$value'";
- 		$result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
-
- 		if($result){
- 		
- 			while ($row = mysqli_fetch_array($result)) {
-
-				  if($row['ativo'] == 0){
-                        $c = 'class="label-warning"';
-                    }else{
-                        $c = " ";
-                    }
- 				echo '<li '.$c.'>
-                  <!-- drag handle -->
-                      <span class="handle">
-                        <i class="fa fa-ellipsis-v"></i>
-                        <i class="fa fa-ellipsis-v"></i>
-                      </span>
-
-					      <!-- Modal -->
+	public function index($value)
+	{
+		$query = "SELECT * FROM `cliente` WHERE `public` = 1 AND `ativo` = '$value'";
+		$result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+	
+		if ($result) {
+			echo '<table class="table table-striped">';
+			echo '<thead>
+					<tr>
+						<th>ID</th>
+						<th>Nome</th>
+						<th>Telefone</th>
+						<th>Desconto (%)</th>
+						<th>Ativo</th>
+						<th>Opções</th>
+					</tr>
+				  </thead>';
+			echo '<tbody>';
+	
+			while ($row = mysqli_fetch_array($result)) {
+				$ativo_class = ($row['ativo'] == 0) ? 'class="label-warning"' : '';
+				echo '<tr ' . $ativo_class . '>';
+				echo '<td>' . $row['idcliente'] . '</td>';
+				echo '<td>' . $row['nome'] . '</td>';
+				echo '<td>' . $row['telefone'] . '</td>';
+				echo '<td>' . ($row['desconto'] == null ? 'Sem Desconto' : $row['desconto']). '</td>';
+				echo '<td>' . ($row['ativo'] == 1 ? 'Sim' : 'Não') . '</td>';
+				
+				echo '<td>
+						<a href="editcliente.php?id=' . $row['idcliente'] . '" class="btn btn-primary btn-sm">Editar</a>
+						<button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcliente'] . '">Excluir</button>
+	
+						    <!-- Modal -->
                       <div class="modal fade" id="deleteModal' . $row['idcliente'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idcliente'] . '" aria-hidden="true" >
                           <div class="modal-dialog" role="document">
                               <div class="modal-content">
@@ -54,28 +65,15 @@
                               </div>
                           </div>
                       </div>
-                  
-                  <!-- todo text -->
-                  <span class="badge btn-primary">'.$row['idcliente'].' </span> 
-				  <span class="text">'.$row['nome'].'</span>
-				  <span class="text"> | Telefone: '.$row['telefone'].'</span>
-				  <span class="text"> | Desconto: '.$row['desconto'].'%</span>
-                  <!-- Emphasis label -->
-                  <!-- <small class="label label-danger"><i class="fa fa-clock-o"></i> 2 mins</small> -->
-                  <!-- General tools such as edit or delete-->
-                  <div class="tools">
-                    <a href="editcliente.php?id='.$row['idcliente'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
-                    <a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcliente'] . '" title="Excluir">
-                          <i class="fa fa-trash-o fa-lg"></i>
-                      </a>
-                  </div>
-                </li>';
-                 				
- 			}
- 			
- 		}
-
- 	}
+					  </td>';
+				echo '</tr>';
+			}
+	
+			echo '</tbody>';
+			echo '</table>';
+		}
+	}
+	
 
  	public function listClientes($value = NULL){
 
@@ -90,7 +88,7 @@
 			}else{
 			$selected = "";
 			}
-					echo '<option value="'.$row['idcliente'].'" '.$selected.' >'.$row['nome'].'</option>';
+					echo '<option value="'.$row['idcliente'].'" '.$selected.' >'.$row['idcliente'].' - '.$row['nome'].'</option>';
 				}
 
 		}

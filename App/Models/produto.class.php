@@ -10,35 +10,44 @@ require_once 'connect.php';
 class Produtos extends Connect
 {
  	
-  public function index($value)
-  {
-      $query = "SELECT *FROM `produto` WHERE `public` = 1 AND `ativo` = '$value'";
-      $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
-  
-      if($result){
-  
-          while ($row = mysqli_fetch_array($result)) {
-  
-              if($row['ativo'] == 0){
-                  $c = 'class="label-warning"';
-              }else{
-                  $c = " ";
-              }
-
-              if($row['quantidade'] < 10){
-                $q = 'class="text text-danger"';
-                }else{
-                $q = " ";
-                }
-  
-              echo '<li '.$c.'>
-                    <!-- drag handle -->
-                        <span class="handle">
-                          <i class="fa fa-ellipsis-v"></i>
-                          <i class="fa fa-ellipsis-v"></i>
-                        </span>
-
-                        <!-- Modal -->
+    public function index($value)
+    {
+        $query = "SELECT * FROM `produto` WHERE `public` = 1 AND `ativo` = '$value'";
+        $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+    
+        if ($result) {
+            echo '<table class="table table-striped">';
+            echo '<thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Valor</th>
+                        <th>Quantidade</th>
+                        <th>Descrição</th>
+                        <th>Ativo</th>
+                        <th>Opções</th>
+                    </tr>
+                  </thead>';
+            echo '<tbody>';
+    
+            while ($row = mysqli_fetch_array($result)) {
+                $ativo_class = ($row['ativo'] == 0) ? 'class="label-warning"' : '';
+                $quantidade_class = ($row['quantidade'] < 10) ? 'class="danger"' : '';
+                $text_quantidade_class = ($row['quantidade'] < 10) ? 'class="text-danger"' : '';
+    
+                echo '<tr ' . $ativo_class . ' ' . $quantidade_class . '>';
+                echo '<td>' . $row['idproduto'] . '</td>';
+                echo '<td>' . $row['nome'] . '</td>';
+                echo '<td>' . $row['valor'] . '</td>';
+                echo '<td ' . $text_quantidade_class . '>' . $row['quantidade'] . '</td>';
+                echo '<td>' . $row['descricao'] . '</td>';
+                echo '<td>' . ($row['ativo'] == 1 ? 'Sim' : 'Não') . '</td>';
+                
+                echo '<td>
+                        <a href="editproduto.php?id=' . $row['idproduto'] . '" class="btn btn-primary btn-sm">Editar</a>
+                        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idproduto'] . '">Excluir</button>
+    
+                           <!-- Modal -->
                       <div class="modal fade" id="deleteModal' . $row['idproduto'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idproduto'] . '" aria-hidden="true" >
                           <div class="modal-dialog" role="document">
                               <div class="modal-content">
@@ -61,33 +70,15 @@ class Produtos extends Connect
                               </div>
                           </div>
                       </div>
-                    
-                    <!-- todo text -->
-                    <span class="text"> '.$row['idproduto'].'</span>
-                    <span class="text"> '.$row['nome'].' </span>
-                    -<span class="text">'.$row['valor'].' | </span>
-                    <span '.$q.' class="text"> Qtd: '.$row['quantidade'].'</span>
-                     <span class="text">| Descrição: '.$row['descricao'].'</span>';
-  
-              // Verificar se `public` é igual a 1
-              if ($row['public'] == 1) {
-                  echo '
-                  <!-- General tools such as edit or delete-->
-                  <div class="tools d-flex justify-content-around">
-                      <a href="editproduto.php?id='.$row['idproduto'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
-  
-                      <a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idproduto'] . '" title="Excluir">
-                          <i class="fa fa-trash-o fa-lg"></i>
-                      </a>
-  
-                      
-                  </div>';
-              }
-  
-              echo '</li>';
-          }
-      }
-  }
+                      </td>';
+                echo '</tr>';
+            }
+    
+            echo '</tbody>';
+            echo '</table>';
+        }
+    }
+    
   
 
   public function listProdutosCheckbox($produtosSelecionados = []) {

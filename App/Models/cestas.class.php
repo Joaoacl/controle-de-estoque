@@ -1,7 +1,7 @@
 <?php
 
 /*
- Class produtos
+ Class Cestas
 */
 
  require_once 'connect.php';
@@ -9,91 +9,79 @@
   class Cestas extends Connect
  {
  	
-  public function index($value)
-  {
-      $query = "SELECT c.idcestaBasica, c.nome AS nome_cesta, c.descricao, c.valor, c.ativo, c.public, cat.nome AS nome_categoria 
-                FROM `cestabasica` c
-                JOIN `categoriaCesta` cat ON c.categoriaCesta_idcategoriaCesta = cat.idcategoriaCesta WHERE c.`public` = 1 AND c.`ativo` = '$value'";
-      $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
-  
-      if($result){
-  
-          while ($row = mysqli_fetch_array($result)) {
-  
-            
+    public function index($value)
+    {
+        $query = "SELECT c.idcestaBasica, c.nome AS nome_cesta, c.descricao, c.valor, c.ativo, c.public, cat.nome AS nome_categoria 
+                  FROM `cestabasica` c
+                  JOIN `categoriaCesta` cat ON c.categoriaCesta_idcategoriaCesta = cat.idcategoriaCesta WHERE c.`public` = 1 AND c.`ativo` = '$value'";
+        $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 
-              if($row['ativo'] == 0){
-                  $c = 'class="label-warning"';
-              }else{
-                  $c = " ";
-              }
-  
-              echo '<li '.$c.'>
-                    <!-- drag handle -->
-                        <span class="handle">
-                          <i class="fa fa-ellipsis-v"></i>
-                          <i class="fa fa-ellipsis-v"></i>
-                        </span>
+        if ($result) {
+            echo '<table class="table table-striped">';
+            echo '<thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome da Cesta</th>
+                        <th>Descrição</th>
+                        <th>Valor</th>
+                        <th>Categoria</th>
+                        <th>Ativo</th>
+                        <th>Opções</th>
+                    </tr>
+                  </thead>';
+            echo '<tbody>';
 
-                         <!-- Modal -->
+            while ($row = mysqli_fetch_array($result)) {
+                $ativo_class = ($row['ativo'] == 0) ? 'class="label-warning"' : '';
+                
+                echo '<tr ' . $ativo_class . '>';
+                echo '<td>' . $row['idcestaBasica'] . '</td>';
+                echo '<td>' . $row['nome_cesta'] . '</td>';
+                echo '<td>' . $row['descricao'] . '</td>';
+                echo '<td>R$ ' . $row['valor'] . '</td>';
+                echo '<td>' . $row['nome_categoria'] . '</td>';
+                echo '<td>' . ($row['ativo'] == 1 ? 'Sim' : 'Não') . '</td>';
+                
+                echo '<td>
+                        <a href="editcesta.php?id=' . $row['idcestaBasica'] . '" class="btn btn-primary btn-sm">Editar</a>
+                        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcestaBasica'] . '">Excluir</button>
+
+                        <!-- Modal -->
                       <div class="modal fade" id="deleteModal' . $row['idcestaBasica'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idcestaBasica'] . '" aria-hidden="true" >
-                        <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="deleteModalLabel' . $row['idcestaBasica'] . '">Excluir Cesta</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
-                            </div>
-                            <div class="modal-body">
-                              Você tem certeza que deseja excluir a cesta <strong>' . $row['nome_cesta'] . '</strong>?
-                            </div>
-                            <div class="modal-footer">
-                              <form action="../../App/Database/delcesta.php" method="POST">
-                                <input type="hidden" name="idcestaBasica" value="' . $row['idcestaBasica'] . '">
-                                <button type="button" name="upload" value="Cancelar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" name="upload" value="Cadastrar" class="btn btn-danger">Excluir</button>
-                              </form>
-                            </div>
+                          <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title" id="deleteModalLabel' . $row['idcestaBasica'] . '">Excluir Cesta</h5>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                      </button>
+                                  </div>
+                                  <div class="modal-body">
+                                      Você tem certeza que deseja excluir a cesta <strong>' . $row['nome_cesta'] . '</strong>?
+                                  </div>
+                                  <div class="modal-footer">
+                                      <form action="../../App/Database/delcesta.php" method="POST">
+                                          <input type="hidden" name="idcestaBasica" value="' . $row['idcestaBasica'] . '">
+                                          <button type="button" name="upload" value="Cancelar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                          <button type="submit" name="upload" value="Cadastrar" class="btn btn-danger">Excluir</button>
+                                      </form>
+                                  </div>
+                              </div>
                           </div>
-                        </div>
                       </div>
+                      </td>';
+                echo '</tr>';
+            }
 
-                    <span class="text">
-                    
-                    <!-- todo text -->
-                    <span class="badge left text">'.$row['idcestaBasica'].'</span>
-                    <span class="left text">'.$row['nome_cesta'].'</span> </span> 
-                    | '.$row['descricao'].'
-                    | VALOR: <strong>' . $row['valor'] . '</strong> 
-                    | CATEGORIA: <strong>'.$row['nome_categoria'].'</strong>                      
-                    </span>';
-  
-              // Verificar se `public` é igual a 1
-              if ($row['public'] == 1) {
-                  echo '
-                    <!-- General tools such as edit or delete-->
-                    <div class="tools d-flex justify-content-around">
-                      <a href="editcesta.php?id='.$row['idcestaBasica'].'" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fa fa-edit fa-lg"></i></a>
-  
-                      <a href="#" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcestaBasica'] . '" title="Excluir">
-                        <i class="fa fa-trash-o fa-lg"></i>
-                      </a>
-  
-                     
-  
-                    </div>';
-              }
-  
-              echo '</li>';
-          }
-      }
-  }
+            echo '</tbody>';
+            echo '</table>';
+        }
+    }
   
 
  	public function InsertCestas($nomeCesta, $descricao, $valor, $categoriaCesta_idcategoriaCesta, $ativo){
     
-    $valor = str_replace(',', '.', $valor);
+    //$valor = str_replace(',', '.', $valor);
 
  		$query = "INSERT INTO `cestabasica`(`idcestaBasica`, `nome`, `descricao`, `valor`, `categoriaCesta_idcategoriaCesta`, `ativo`, `public`) VALUES (NULL, '$nomeCesta','$descricao', '$valor', '$categoriaCesta_idcategoriaCesta', '$ativo', '1')";
  		if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
@@ -109,6 +97,57 @@
               VALUES ('$idcestaBasica', '$idProduto', '$quantidade')";
     mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
     }
+
+    public function listCestas($value = NULL){
+
+      $query = "SELECT *FROM `cestabasica`  WHERE `ativo` = 1 AND `public` = 1" ;
+      $result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
+ 
+      if($result){
+      
+        while ($row = mysqli_fetch_array($result)) {
+         if($value == $row['idcestaBasica']){ 
+           $selected = "selected";
+         }else{
+           $selected = "";
+         }
+          echo '<option value="'.$row['idcestaBasica'].'" '.$selected.' >'.$row['idcestaBasica'].' - '.$row['nome'].'</option>';
+        }
+ 
+    }
+  }
+
+  public function getCestaById($idCesta)
+  {
+    // Consulta para obter as informações da cesta básica
+    $queryCesta = "SELECT idcestaBasica, nome, descricao, valor 
+                   FROM cestabasica 
+                   WHERE idcestaBasica = '$idCesta'";
+    $resultCesta = mysqli_query($this->SQL, $queryCesta) or die(mysqli_error($this->SQL));
+
+    if ($resultCesta && mysqli_num_rows($resultCesta) > 0) {
+        $cesta = mysqli_fetch_assoc($resultCesta);
+
+        // Consulta para obter os produtos que compõem a cesta
+        $queryProdutos = "SELECT p.idproduto, p.nome AS nome_produto, cbp.quantidade 
+                          FROM produto p
+                          JOIN cestabasica_has_produto cbp ON p.idproduto = cbp.produto_idproduto
+                          WHERE cbp.cestaBasica_idcestaBasica = '$idCesta'";
+        $resultProdutos = mysqli_query($this->SQL, $queryProdutos) or die(mysqli_error($this->SQL));
+
+        $produtos = [];
+        while ($row = mysqli_fetch_assoc($resultProdutos)) {
+            $produtos[] = $row;
+        }
+
+        // Adiciona os produtos ao array da cesta
+        $cesta['produtos'] = $produtos;
+
+        return $cesta;
+    }
+
+    return null;
+  }
 
    
   public function editCestas($value)

@@ -59,7 +59,7 @@ echo'
                   <label for="exampleInputEmail1">Descrição</label>
                   <input type="text" name="descricao" class="form-control" id="exampleInputEmail1" placeholder="Descrição" value="'.$resp['Cestas']['descricao'].'" maxlength="45">
 
-                  <label for="exampleInputEmail1">Valor</label>
+                  <label for="exampleInputEmail1">Valor (R$)</label>
                   <input type="text" name="valor" class="form-control" id="exampleInputEmail1" placeholder="R$" value="'.$resp['Cestas']['valor'].'" oninput="mascaraValor(this)" onchange="validarValorFinal(this)">
 
                   <label for="exampleInputEmail1">Categoria Cesta</label>
