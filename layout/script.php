@@ -12,6 +12,8 @@ if (isset($_POST['limpar_notificacoes'])) {
 
 $contagemNotificacoes = count($_SESSION['notificacoes']);
 
+$colorNotificacoes = $contagemNotificacoes >= 1 ? 'btn-warning' : 'badge-secondary';
+
 $url = 'http://localhost/controlestoque/views/';
 
 $head = '<!DOCTYPE html>
@@ -84,7 +86,7 @@ $header = '<header class="main-header">
           <!-- Notifications: style can be found in dropdown.less -->
           <a class="dropdown-toggle open" style="cursor: pointer;" data-toggle="modal" data-target="#globalModal">
             <i class="fa fa-bell" aria-hidden="true"></i>
-            Notificações <span class="badge btn-warning">' . $contagemNotificacoes . '</span>
+            Notificações <span class="badge '.$colorNotificacoes.'">' . $contagemNotificacoes . '</span>
           </a>
           </li>
           
