@@ -39,6 +39,7 @@ echo '<div class="content-wrapper">
                   <li><a href="#">3</a></li>
                   <li><a href="#">&raquo;</a></li>
                 </ul>
+                
               </div>
             </div>
             <!-- /.box-header -->

@@ -5,18 +5,14 @@ require_once '../../App/Models/produto.class.php';
 
 
 
-class Vendas extends Connect
+class Compras extends Connect
 {
-    public function index()
+    public function index($value)
     {
-        $query = "SELECT v.idvenda, v.cliente_idcliente, v.dataVenda, v.valorTotal, cli.nome AS nome_cliente, cli.desconto AS desconto_cliente, cli.telefone AS telefone_cliente, c.nome AS cestaVendida, cv.quantidade AS quantVendida, u.nomeUsuario AS nome_vendedor
-                FROM `venda` v 
-                JOIN `cliente` cli ON v.cliente_idcliente = cli.idcliente
-                JOIN `cestabasica_has_venda` cv ON v.idvenda = cv.venda_idvenda
-                JOIN `cestabasica` c ON cv.cestaBasica_idcestaBasica = c.idcestaBasica         
-                JOIN `usuario_has_venda` uv ON v.idvenda = cv.venda_idvenda
-                JOIN `usuario` u ON uv.usuario_idusuario = u.idusuario
-                WHERE v.public = 1";
+        $query = "SELECT sc.idsolicitaCompra, sc.dataEntrega, sc.quantidade, sc.produto_idproduto, sc.fornecedor_idfornecedor, sc.ativo, f.nome AS nome_fornecedor
+                FROM `solicitacompra` sc 
+                JOIN `fornecedor` f ON sc.fornecedor_idfornecedor = f.idfornecedor
+                WHERE sc.ativo = '$value'";
 
         $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 
@@ -25,28 +21,29 @@ class Vendas extends Connect
             echo '<thead>
                     <tr>
                         <th>ID</th>
-                        <th>Item Vendido</th>
-                        <th>Cliente</th>
-                        <th>Vendedor</th>
-                        <th>Total da Venda</th>
-                        <th>Data da Venda</th>                      
+                        <th>Produtos Solicitados</th>
+                        <th>Quantidade</th>
+                        <th>Fornecedor</th>
+                        <th>Previsão Entrega</th>
+                        <th>Status</th>                       
                         <th>Opções</th>
                     </tr>
                 </thead>';
             echo '<tbody>';
 
             while ($row = mysqli_fetch_array($result)) {
-                echo '<tr>';
-                echo '<td>' . $row['idvenda'] . '</td>';
-                echo '<td>' . $row['cestaVendida'] . '</td>';
-                echo '<td>' . $row['nome_cliente'] . '</td>';
-                echo '<td>' . $row['nome_vendedor'] . '</td>';
-                echo '<td>R$ ' . $row['valorTotal'] . '</td>';   
-                echo '<td>' . date('d/m/Y', strtotime($row['dataVenda'])) .  '</td>';
+                $ativo_class = ($row['ativo'] == 0) ? 'class="success"' : '';
+                echo '<tr ' . $ativo_class . '>';
+                echo '<td>' . $row['idsolicitaCompra'] . '</td>';
+                echo '<td>' . $row['produto_idproduto'] . '</td>';
+                echo '<td>' . $row['quantidade'] . '</td>';
+                echo '<td>' . $row['nome_fornecedor'] . '</td>';
+                echo '<td>' . date('d/m/Y', strtotime($row['dataEntrega'])) .  '</td>';
+                echo '<td>' . ($row['ativo'] == 1 ? 'Em andamento' : 'Entregue') . '</td>';
                 
                 // Botões de opções, incluindo o botão para abrir o modal de Visualizar
                 echo '<td>
-                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#viewModal' . $row['idvenda'] . '">Visualizar</button>';
+                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#viewModal' . $row['idsolicitaCompra'] . '">Visualizar</button>';
                         
                         //<button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idvenda'] . '">Excluir</button>
                         
@@ -54,48 +51,42 @@ class Vendas extends Connect
                 echo '</tr>';
 
                 // Modal informações da venda
-                echo '<div class="modal fade" id="viewModal' . $row['idvenda'] . '" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel' . $row['idvenda'] . '" aria-hidden="true">
+                echo '<div class="modal fade" id="viewModal' . $row['idsolicitaCompra'] . '" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel' . $row['idsolicitaCompra'] . '" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header bg-primary text-white">
-                                    <h4 class="modal-title" id="viewModalLabel' . $row['idvenda'] . '">Detalhes da Venda</h4>
+                                    <h4 class="modal-title" id="viewModalLabel' . $row['idsolicitaCompra'] . '">Detalhes da Compra</h4>
                                 </div>
                                 <div class="modal-body">
-                                    <p><strong>ID da Venda:</strong> ' . $row['idvenda'] . '</p>
-                                    <h4 class="text-primary"><strong>Cliente</strong></h4>
-                                    <p><strong>Nome Cliente:</strong> ' . $row['nome_cliente'] . '</p>
-                                    <p><strong>Telefone Cliente:</strong> ' . $row['telefone_cliente'] . '</p>
-                                     <p><strong>Desconto do Cliente:</strong> ' . ($row['desconto_cliente'] == null ? '0' : $row['desconto_cliente']). ' %</p>
-                                
-                                    <h4 class="text-primary"><strong>Vendedor</strong></h4>
-                                    <p><strong>Nome Vendedor:</strong> ' . $row['nome_vendedor'] . '</p>
-                                  
-                                    <h4 class="text-primary"><strong>Itens</strong></h4>
-                                    <p><strong>Item Vendido:</strong> ' . $row['cestaVendida'] . '</p>
-                                    <p><strong>Quantidade:</strong> ' . $row['quantVendida'] . '</p>
-                                    <p class="col-8 text-success"><strong>Valor Total:</strong > R$ ' . $row['valorTotal'] . '</p>
-                                    <p><strong>Data da Venda:</strong> ' . date('d/m/Y', strtotime($row['dataVenda'])) . '</p>
+                                    <p><strong>ID da Solicitação:</strong> ' . $row['idsolicitaCompra'] . '</p>
+                                    <h4><strong>Itens da compra</strong></h4>
+                                    <p><strong>Produto:</strong> ' . $row['produto_idproduto'] . '</p>
+                                    <p><strong>Quantidade:</strong> ' . $row['quantidade'] . '</p>
+                                    <p><strong>Fornecedor:</strong> ' . $row['fornecedor_idfornecedor']. '</p>
+                                    <p><strong>Previsão de Entrega:</strong> ' . date('d/m/Y', strtotime($row['dataEntrega'])) . '</p>
+                                    
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                    <button type="button" class="btn btn-success" data-dismiss="modal">Concluir</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>    
                                 </div>
                             </div>
                         </div>
                     </div>';
 
                 // Modal de Exclusão
-                echo '<div class="modal fade" id="deleteModal' . $row['idvenda'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idvenda'] . '" aria-hidden="true">
+                echo '<div class="modal fade" id="deleteModal' . $row['idsolicitaCompra'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idsolicitaCompra'] . '" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title" id="deleteModalLabel' . $row['idvenda'] . '">Excluir Venda</h5>
+                                    <h5 class="modal-title" id="deleteModalLabel' . $row['idsolicitaCompra'] . '">Excluir Venda</h5>
                                 </div>
                                 <div class="modal-body">
-                                    Você tem certeza que deseja excluir a venda <strong>' . $row['idvenda'] . '</strong>?
+                                    Você tem certeza que deseja excluir a venda <strong>' . $row['idsolicitaCompra'] . '</strong>?
                                 </div>
                                 <div class="modal-footer">
                                     <form action="../../App/Database/delvenda.php" method="POST">
-                                        <input type="hidden" name="idvenda" value="' . $row['idvenda'] . '">
+                                        <input type="hidden" name="idsolicitaCompra" value="' . $row['idsolicitaCompra'] . '">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                                         <button type="submit" name="upload" value="Cadastrar" class="btn btn-danger">Excluir</button>
                                     </form>
@@ -203,4 +194,4 @@ class Vendas extends Connect
     }
 }
 
-$vendas = new Vendas;
+$compras = new Compras;

@@ -32,7 +32,7 @@
             echo '<tbody>';
 
             while ($row = mysqli_fetch_array($result)) {
-                $ativo_class = ($row['ativo'] == 0) ? 'class="label-warning"' : '';
+                $ativo_class = ($row['ativo'] == 0) ? 'class="warning"' : '';
                 
                 echo '<tr ' . $ativo_class . '>';
                 echo '<td>' . $row['idcestaBasica'] . '</td>';

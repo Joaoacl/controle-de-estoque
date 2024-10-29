@@ -31,7 +31,7 @@ class Produtos extends Connect
             echo '<tbody>';
     
             while ($row = mysqli_fetch_array($result)) {
-                $ativo_class = ($row['ativo'] == 0) ? 'class="label-warning"' : '';
+                $ativo_class = ($row['ativo'] == 0) ? 'class="warning"' : '';
                 $quantidade_class = ($row['quantidade'] < 10) ? 'class="danger"' : '';
                 $text_quantidade_class = ($row['quantidade'] < 10) ? 'class="text-danger"' : '';
     

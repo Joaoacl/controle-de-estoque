@@ -12,7 +12,9 @@
  	
 	public function index($value)
 	{
-		$query = "SELECT * FROM `fornecedor` WHERE `public` = 1 AND `ativo` = '$value'";
+		$query = "SELECT * FROM `fornecedor` f 
+		JOIN `endereco` e ON f.endereco_idendereco = e.idendereco
+		WHERE `public` = 1 AND `ativo` = '$value'";
 		$result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 	
 		if ($result) {
@@ -23,6 +25,8 @@
 						<th>Nome</th>
 						<th>Telefone</th>
 						<th>Email</th>
+						<th>Cidade</th>
+						<th>UF</th>
 						<th>Conta</th>
 						<th>Agência</th>
 						<th>Banco</th>
@@ -33,12 +37,14 @@
 			echo '<tbody>';
 	
 			while ($row = mysqli_fetch_array($result)) {
-				$ativo_class = ($row['ativo'] == 0) ? 'class="label-warning"' : '';
+				$ativo_class = ($row['ativo'] == 0) ? 'class="warning"' : '';
 				echo '<tr ' . $ativo_class . '>';
 				echo '<td>' . $row['idfornecedor'] . '</td>';
 				echo '<td>' . $row['nome'] . '</td>';
 				echo '<td>' . $row['telefone'] . '</td>';
 				echo '<td>' . $row['email'] . '</td>';
+				echo '<td>' . $row['cidade'] . '</td>';
+				echo '<td>' . $row['estado'] . '</td>';
 				echo '<td>' . $row['numConta'] . '</td>';
 				echo '<td>' . $row['agencia'] . '</td>';
 				echo '<td>' . $row['banco'] . '</td>';

@@ -44,11 +44,13 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
                   <label for="exampleInputEmail1">CPF *</label>
                   <input type="text" name="cpf" class="form-control" id="exampleInputEmail1" placeholder="CPF" maxlength="14" oninput="aplicarMascaraCPF(this)" required>
 
-                  <label for="descontoCheckbox">Aplicar Desconto</label>
-                  <input type="checkbox" id="descontoCheckbox" onclick="toggleDesconto()"></br>
+                 
 
-                  <label for="desconto">Desconto (%)</label>
+                  <label for="desconto">Desconto (%)</label></br>
+                  
+                  <input type="checkbox" id="descontoCheckbox" onclick="toggleDesconto()">  <label for="descontoCheckbox">Aplicar Desconto</label></br>
                   <input type="number" name="desconto" class="form-control" id="desconto" placeholder="Percentual de desconto" min="0" max="10" disabled>
+                  
 
                   
                   <label for="email">Email *</label>
