@@ -71,9 +71,7 @@ echo '<div class="content-wrapper">
               }
                      
                 $usuario->index($perm, $value);
-              }else{
-                echo'Você não possui acesso!';
-              }
+              
                
               
         echo '</ul>
@@ -82,11 +80,16 @@ echo '<div class="content-wrapper">
             <div class="box-footer clearfix no-border">
               <a href="addusuarios.php" type="button" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add Usuário</a>
               <form action="index.php" method="post">
+             
               <button name="ativo" type="submit" value="'.$ativo.'" class="btn '.$btn_color.' pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button></form>
+             
             </div>
           </div>
 	 
 ';
+            }else{
+              echo'Você não possui acesso!';
+            }
 echo '</div>';
 echo '</section>';
       
