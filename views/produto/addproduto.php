@@ -50,8 +50,11 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
                   <input type="text" name="valorproduto" class="form-control" id="exampleInputEmail1" placeholder="R$" oninput="mascaraValor(this)" onchange="validarValorFinal(this)" required>
                 
 
-                  <label for="exampleInputEmail1">Quantidade</label>
-                  <input type="number" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Quantidade" min="1" max="1000" oninput="validarQuantidade(this)" onchange="validarQuantidadeFinal(this)" required>
+                  <label for="exampleInputEmail1">Quantidade em Estoque</label>
+                  <input type="number" name="quantidadeproduto" class="form-control" id="exampleInputEmail1" placeholder="Quantidade " min="1" max="1000" oninput="validarQuantidade(this)" onchange="validarQuantidadeFinal(this)" required>
+
+                  <label for="exampleInputEmail1">Quantidade Mínima (Quantidade mínima aceitavel em estoque)</label>
+                  <input type="number" name="quantidademinima" class="form-control" id="quantidademinima" placeholder="Quantidade Mínima" min="1" max="50" oninput="validarQuantidade(this)" onchange="validarQuantidadeFinal(this)" required>
                 </div>
 
 

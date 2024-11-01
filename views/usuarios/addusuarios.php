@@ -35,6 +35,20 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
             <!-- /.box-header -->
 ';
 
+        $erros = $_SESSION['erros'] ?? [];
+        $formData = $_SESSION['form_data'] ?? [];
+        unset($_SESSION['erros'], $_SESSION['form_data']);
+
+        $label_email = "";
+        $label_cpf = "";
+        if (isset($erros['email'])):  
+          $label_email = "error";
+        endif;
+
+        if (isset($erros['cpf'])):  
+          $label_cpf = "error";
+        endif;
+
 if($perm == 1){
 
 echo '
@@ -42,49 +56,65 @@ echo '
 
 
             <!-- form start -->
-            <form name="meuFormulario" role="form" enctype="multipart/form-data" action="../../App/Database/insertuser.php" method="POST" onsubmit="return validarFormulario() && removerEspacos()">
+            <form id="formCriaUsuario" name="formCriaUsuario" role="form" enctype="multipart/form-data" action="../../App/Database/insertuser.php" method="POST" onsubmit="return removerEspacos() && validarFormulario()">
               <div class="box-body">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Nome do Usuário *</label>
-                  <input type="text" name="username" class="form-control" id="exampleInputEmail1" placeholder="Nome do Usuário" maxlength="45" required>
-                
+                  <input type="text" name="username" class="form-control" id="exampleInputEmail1" placeholder="Nome do Usuário" maxlength="45" value="' .htmlspecialchars($formData['username'] ?? '').'" required>
+          
 
-                
-                <label for="exampleInputEmail1">CPF *</label>
-                <input type="text" name="cpf" id="cpf" class="form-control" placeholder="CPF" maxlength="14" oninput="aplicarMascaraCPF(this)" required>
+                <label class="'.$label_cpf.'" for="exampleInputEmail1">CPF *</label>
+                <input type="text" name="cpf" class="form-control" placeholder="CPF" maxlength="14" oninput="aplicarMascaraCPF(this)" required value="' .htmlspecialchars($formData['cpf'] ?? '').'" required>
+                ';
+                if (isset($erros['cpf'])): 
+                    echo'<div class="error">';
+                    echo $erros['cpf'];
+                    echo'</div>';
+                endif;
               
-
-                
+                echo'</br>
                 <label for="exampleInputEmail1">Salário *</label>
-                <input type="text" name="salario"  class="form-control" id="exampleInputEmail1" placeholder="R$" oninput="mascaraValor(this)" required>
+                <input type="text" name="salario"  class="form-control" id="exampleInputEmail1" placeholder="R$" oninput="mascaraValor(this)" value="' .htmlspecialchars($formData['salario'] ?? '').'" required>
                 
 
                 
                 <label for="exampleInputEmail1">Cargo *</label>
-                <input type="text" name="cargo" class="form-control" id="exampleInputEmail1" placeholder="Cargo" maxlength="45" required>
+                <input type="text" name="cargo" class="form-control" id="exampleInputEmail1" placeholder="Cargo" maxlength="45" value="' .htmlspecialchars($formData['cargo'] ?? '').'" required>
                 
                
-                <label for="exampleInputEmail1">E-mail *</label>
-                <input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="E-mail" maxlength="45" required oninput="validarFormulario()">
+                
+
+                <label class="'.$label_email .'" for="email">Email *</label>
+                <input type="text" name="email" class="form-control" placeholder="E-mail" maxlength="45" value="' .htmlspecialchars($formData['email'] ?? '').'" required oninput="validarFormulario()" >
+                ';
+                if (isset($erros['email'])): 
+                    echo'<div class="error">';
+                    echo $erros['email'];
+                    echo'</div>';
+                endif;
+              
+                echo'
+                
 
                 <label for="confirmar_email">Confirmar E-mail *</label>
-                <input type="email" id="confirmar_email" class="form-control" name="confirmar_email" maxlength="45" placeholder="Confirmar E-mail" required oninput="validarFormulario()">
+                <input type="email" id="confirmar_email" class="form-control" name="confirmar_email" maxlength="45" placeholder="Confirmar E-mail" value="' .htmlspecialchars($formData['confirmar_email'] ?? '').'" required oninput="validarFormulario()">
                 <div id="errorEmail" class="error"></div>
 
                 
                 <label for="exampleInputEmail1">Senha *</label>
-                <input type="password" name="senha" id="senha" class="form-control" placeholder="Senha" maxlength="45" required oninput="validarFormulario()">
+                <input type="password" name="senha" id="senha" class="form-control" placeholder="Senha" maxlength="45" value="' .htmlspecialchars($formData['senha'] ?? '').'" required oninput="validarFormulario()">
                 
 
                 <label for="confirmar_senha">Confirmar Senha *</label>
-                <input type="password" id="confirmar_senha" class="form-control" name="confirmar_senha" placeholder="Confirmar Senha"  maxlength="45" required oninput="validarFormulario()">
+                <input type="password" id="confirmar_senha" class="form-control" name="confirmar_senha" placeholder="Confirmar Senha"  maxlength="45" value="' .htmlspecialchars($formData['confirmar_senha'] ?? '').'" required oninput="validarFormulario()">
                 <div id="errorSenha" class="error"></div>
                 
                 <label for="exampleInputEmail1">Telefone *</label>
-                <input type="text" name="telefone" id="telefone" class="form-control" placeholder="Telefone" maxlength="15" oninput="aplicarMascaraTelefone(this)" required>
+                <input type="text" name="telefone" id="telefone" class="form-control" placeholder="Telefone" maxlength="15" oninput="aplicarMascaraTelefone(this)" value="' .htmlspecialchars($formData['telefone'] ?? '').'" required>
 
                 <label for="exampleInputEmail1">Permissão *</label>
-                <select class="form-control" name="permissao" type="permissao" required>
+                <select class="form-control" name="permissao" type="permissao" value="' .htmlspecialchars($formData['permissao'] ?? '').'" required>
+                <option value="">Escolha a Permissão do Usuário</option>
                 <option value="1">Administrador</option>
                 <option value="2">Vendedor</option>
                 </select>
@@ -98,23 +128,23 @@ echo '
                 <h4 >Endereço</h4>
 
                   <label for="exampleInputEmail1">Rua *</label>
-                  <input type="text" name="rua" class="form-control" id="exampleInputEmail1" placeholder="Rua" required maxlength="45">
+                  <input type="text" name="rua" class="form-control" id="exampleInputEmail1" placeholder="Rua" value="' .htmlspecialchars($formData['rua'] ?? '').'" required maxlength="45">
 
                   <label for="exampleInputEmail1">Número *</label>
-                  <input type="number" name="numero" class="form-control" id="exampleInputEmail1" placeholder="Número" required maxlength="8">
+                  <input type="text" name="numero" class="form-control" id="exampleInputEmail1" placeholder="Número" value="' .htmlspecialchars($formData['numero'] ?? '').'" required maxlength="8">
 
                   <label for="exampleInputEmail1">Bairro *</label>
-                  <input type="text" name="bairro" class="form-control" id="exampleInputEmail1" placeholder="Bairro" required maxlength="45">
+                  <input type="text" name="bairro" class="form-control" id="exampleInputEmail1" placeholder="Bairro" value="' .htmlspecialchars($formData['bairro'] ?? '').'" required maxlength="45">
 
                   <label for="exampleInputEmail1">Cidade *</label>
-                  <input type="text" name="cidade" class="form-control" id="exampleInputEmail1" placeholder="Cidade" required maxlength="45">
+                  <input type="text" name="cidade" class="form-control" id="exampleInputEmail1" placeholder="Cidade" value="' .htmlspecialchars($formData['cidade'] ?? '').'" required maxlength="45">
 
                   <label for="exampleInputEmail1">Estado *</label>
-                  <input type="text" name="estado" class="form-control" id="exampleInputEmail1" placeholder="Ex: SP, MG, PR" required maxlength="2" oninput="handleInput(event)">
+                  <input type="text" name="estado" class="form-control" id="exampleInputEmail1" placeholder="Ex: SP, MG, PR" value="' .htmlspecialchars($formData['estado'] ?? '').'" required maxlength="2" oninput="handleInput(event)">
 
                   <label for="exampleInputEmail1">CEP *</label>
                   <input type="text" name="cep" class="form-control" 
-                  id="exampleInputEmail1" placeholder="CEP" required maxlength="9" oninput="aplicarMascaraCEP(this)">
+                  id="exampleInputEmail1" placeholder="CEP" value="' .htmlspecialchars($formData['cep'] ?? '').'" required maxlength="9" oninput="aplicarMascaraCEP(this)">
                 </div>
                
             </div>
@@ -193,10 +223,10 @@ echo $javascript;
     };
 
     function validarFormulario() {
-            var email = document.forms["meuFormulario"]["email"].value;
-            var confirmar_email = document.forms["meuFormulario"]["confirmar_email"].value;
-            var senha = document.forms["meuFormulario"]["senha"].value;
-            var confirmar_senha = document.forms["meuFormulario"]["confirmar_senha"].value;
+            var email = document.forms["formCriaUsuario"]["email"].value;
+            var confirmar_email = document.forms["formCriaUsuario"]["confirmar_email"].value;
+            var senha = document.forms["formCriaUsuario"]["senha"].value;
+            var confirmar_senha = document.forms["formCriaUsuario"]["confirmar_senha"].value;
 
             var errorEmail = document.getElementById("errorEmail");
             var errorSenha = document.getElementById("errorSenha");

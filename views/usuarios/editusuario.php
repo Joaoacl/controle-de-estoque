@@ -28,10 +28,27 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
       <div class="row">
         <!-- left column -->
 ';
-        
+
+        $erros = $_SESSION['erros'] ?? [];
+        $formData = $_SESSION['form_data'] ?? [];
+        unset($_SESSION['erros'], $_SESSION['form_data']);
+
+        $label_email = "";
+        $label_cpf = "";
+        if (isset($erros['email'])):  
+          $label_email = "error";
+        endif;
+
+        if (isset($erros['cpf'])):  
+          $label_cpf = "error";
+        endif;
+
         if(isset($_GET['id'])){
             $idusuario = $_GET['id'];
             $resp = $usuario->editUsuario($idusuario);
+
+          
+  
 
 echo'
         <div class="col-md-6">
@@ -42,7 +59,7 @@ echo'
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form id="meuFormulario" name="meuFormulario" role="form" action="../../App/Database/insertuser.php" method="POST" onsubmit="return validarFormulario() && removerEspacos()">
+            <form id="formEditaUsuario" name="formEditaUsuario" role="form" action="../../App/Database/insertuser.php" method="POST" onsubmit="return removerEspacos() && validarFormulario()">
               <div class="box-body">
                 <div class="form-group">
                  <label for="username">ID Usuário</label>
@@ -51,8 +68,15 @@ echo'
                   <label for="username">Nome do Usuário *</label>
                   <input type="text" name="username" class="form-control" id="username" placeholder="Nome" value="' . $resp['Usuario']['nomeUsuario'] . '" maxlength="45" required>
 
-                  <label for="cpf">CPF *</label>
+                  <label class="'.$label_cpf.'" for="cpf">CPF *</label>
                   <input type="text" name="cpf" class="form-control" id="cpf" placeholder="CPF" value="' . $resp['Usuario']['cpf'] . '" maxlength="14" oninput="aplicarMascaraCPF(this)" required>
+                  ';
+                    if (isset($erros['cpf'])):
+                      echo'<div class="error">';
+                      echo $erros['cpf'];
+                      echo'</div>';
+                    endif;
+                  echo'
 
                   <label for="salario">Salário *</label>
                   <input type="text" name="salario" class="form-control" id="salario" placeholder="R$" value="' . $resp['Usuario']['salario'] . '" oninput="mascaraValor(this)" required>
@@ -60,8 +84,16 @@ echo'
                   <label for="cargo">Cargo *</label>
                   <input type="text" name="cargo" class="form-control" id="cargo" placeholder="Cargo" value="' . $resp['Usuario']['cargo'] . '" maxlength="45" required>
 
-                  <label for="email">Email *</label>
+                    
+                  <label class="'.$label_email .'" for="email">Email *</label>
                   <input type="email" name="email" class="form-control" id="email" placeholder="Email" value="' . $resp['Usuario']['email'] . '" maxlength="45" required>
+                   ';
+                    if (isset($erros['email'])):                
+                      echo'<div class="error">';
+                      echo $erros['email'];
+                      echo'</div>';
+                    endif;
+                  echo'
 
                   <label for="senha">Alterar Senha (opcional)</label>
                   <input type="password" name="senha" class="form-control" id="senha" placeholder="Digite uma nova senha (opcional)" maxlength="45" oninput="validarFormulario()" >
@@ -148,6 +180,8 @@ echo $javascript;
 </style>
 
 <script>
+
+  
     
 
     // Máscara para telefone no formato (99) 99999-9999
@@ -170,8 +204,8 @@ echo $javascript;
     function validarFormulario() {
             //var email = document.forms["meuFormulario"]["email"].value;
             //var confirmar_email = document.forms["meuFormulario"]["confirmar_email"].value;
-            var senha = document.forms["meuFormulario"]["senha"].value;
-            var confirmar_senha = document.forms["meuFormulario"]["confirmar_senha"].value;
+            var senha = document.forms["formEditaUsuario"]["senha"].value;
+            var confirmar_senha = document.forms["formEditaUsuario"]["confirmar_senha"].value;
 
             //var errorEmail = document.getElementById("errorEmail");
             var errorSenha = document.getElementById("errorSenha");

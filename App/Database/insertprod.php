@@ -8,6 +8,7 @@ if (isset($_POST['upload']) && $_POST['upload'] == 'Cadastrar') {
     $descricao = trim($_POST['descricaoproduto']);
     $valor = $_POST['valorproduto'];
     $quantidade = $_POST['quantidadeproduto'];
+    $quantidade_minima = $_POST['quantidademinima'];
     $ativo = isset($_POST['ativo']) ? $_POST['ativo'] : 1;
     
     if ($nomeProduto != NULL) {
@@ -15,11 +16,11 @@ if (isset($_POST['upload']) && $_POST['upload'] == 'Cadastrar') {
         if (isset($_POST['idproduto']) && !empty($_POST['idproduto'])) {
             
             $idproduto = $_POST['idproduto'];
-            $produtos->updateProduto($idproduto, $nomeProduto, $valor, $quantidade, $descricao, $ativo);
+            $produtos->updateProduto($idproduto, $nomeProduto, $valor, $quantidade, $quantidade_minima, $descricao, $ativo);
 
         
         } else {
-            $produtos->InsertProdutos($nomeProduto, $descricao, $valor, $quantidade, $ativo);
+            $produtos->InsertProdutos($nomeProduto, $descricao, $valor, $quantidade, $quantidade_minima, $ativo);
         }
     
     } else {

@@ -1,69 +1,58 @@
 <?php
+session_start();
 require_once '../auth.php';
 require_once '../Models/usuario.class.php';
 require_once '../Models/enderecos.class.php';
 require_once '../Models/connect.php';
 
 $enderecos = new Enderecos();
-$connect = new Connect(); // Instancia a conexão
+$connect = new Connect();
 
-// Função para tratar o upload de imagem
-function salvarImagem($imagem) {
-    $diretorio = '../../views/dist/img/'; // Diretório para salvar a imagem
-    $nomeArquivo = basename($imagem['name']); // Nome do arquivo
-    $caminhoCompleto = $diretorio . $nomeArquivo; // Caminho completo para salvar
+$idusuario = $_POST['idusuario'] ?? null; // Verifica se é edição
+$isEditing = !empty($idusuario); // Variável para distinguir entre criação e edição
 
-    // Verifica se o arquivo é realmente uma imagem
-    $checarImagem = getimagesize($imagem['tmp_name']);
-    if ($checarImagem !== false) {
-        // Verifica se o arquivo foi movido corretamente
-        if (move_uploaded_file($imagem['tmp_name'], $caminhoCompleto)) {
-            return $nomeArquivo; // Retorna o nome do arquivo se o upload for bem-sucedido
-        } else {
-            echo "Erro ao mover o arquivo: " . $imagem['tmp_name'] . " para " . $caminhoCompleto;
-            return false; // Retorna false se houver erro ao mover o arquivo
-        }
-    } else {
-        echo "O arquivo não é uma imagem válida.";
-        return false; // Retorna false se o arquivo não for uma imagem válida
-    }
-};
+// Inicialize arrays para erros e dados do formulário
+$_SESSION['erros'] = [];
+$_SESSION['form_data'] = $_POST; // Armazene os dados enviados pelo formulário
 
 function emailJaExiste($email, $conexao, $idusuario = null) {
-    // Ajusta a consulta para excluir o email do próprio usuário que está sendo atualizado
+    // Verifica se o e-mail já existe no banco
     $queryVerificaEmail = "SELECT * FROM usuario WHERE email = ?";
     if ($idusuario) {
         $queryVerificaEmail .= " AND idusuario != ?";
     }
 
     $stmt = $conexao->SQL->prepare($queryVerificaEmail);
-    if ($idusuario) {
-        $stmt->bind_param("si", $email, $idusuario); // "s" para string (email) e "i" para inteiro (idusuario)
-    } else {
-        $stmt->bind_param("s", $email);
-    }
-    
+    $idusuario ? $stmt->bind_param("si", $email, $idusuario) : $stmt->bind_param("s", $email);
     $stmt->execute();
-    $resultado = $stmt->get_result();
-    return $resultado->num_rows > 0;
-};
+    return $stmt->get_result()->num_rows > 0;
+}
 
+function cpfJaExiste($cpf, $conexao, $idusuario = null) {
+    // Verifica se o CPF já existe no banco
+    $queryVerificaCPF = "SELECT * FROM usuario WHERE cpf = ?";
+    if ($idusuario) {
+        $queryVerificaCPF .= " AND idusuario != ?";
+    }
+
+    $stmt = $conexao->SQL->prepare($queryVerificaCPF);
+    $idusuario ? $stmt->bind_param("si", $cpf, $idusuario) : $stmt->bind_param("s", $cpf);
+    $stmt->execute();
+    return $stmt->get_result()->num_rows > 0;
+}
 
 if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
-    // Dados do usuário
-    $idusuario = isset($_POST['idusuario']) ? $_POST['idusuario'] : null;
     $username = $_POST['username'];
     $cpf = $_POST['cpf'];
     $salario = $_POST['salario'];
     $cargo = $_POST['cargo'];
     $email = $_POST['email'];
-    $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT); // Senha criptografada
+    $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
     $telefone = $_POST['telefone'];
     $permissao = $_POST['permissao'];
     $ativo = $_POST['ativo'];
-    $arquivo = $_FILES['arquivo'];
-    //$imagem = $_POST['arquivo'];
-
+    $arquivo = $_FILES['arquivo'] ?? null;
+    
     // Endereço
     $rua = $_POST['rua'];
     $numero = $_POST['numero'];
@@ -72,88 +61,76 @@ if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
     $estado = $_POST['estado'];
     $cep = $_POST['cep'];
 
-    // Verificação de campos obrigatórios
-    if ($username != NULL && $senha != NULL && $email != NULL && $perm == 1) {
+    // Verifique se o email já existe
+    if (emailJaExiste($email, $connect, $idusuario)) {
+        $_SESSION['erros']['email'] = "O email já existe no sistema.";
+    }
 
-        // Verifica se o email já existe no banco de dados
-        if (emailJaExiste($email, $connect, $idusuario)) {
-            // Email já existe, redireciona com uma mensagem de erro
-            header('Location: ../../views/usuarios/index.php?alert=email_ja_existe');
-        } else {
-            // Verificar se o CPF já existe no banco de dados
-            $queryVerificaCPF = "SELECT * FROM usuario WHERE cpf = '$cpf'";
-            if ($idusuario) {
-                $queryVerificaCPF .= " AND idusuario != '$idusuario'";
-            }
+    // Verifique se o CPF já existe
+    if (cpfJaExiste($cpf, $connect, $idusuario)) {
+        $_SESSION['erros']['cpf'] = "O CPF já existe no sistema.";
+    }
 
-            $resultVerificaCPF = mysqli_query($connect->SQL, $queryVerificaCPF);
+    // Se houver erros, redirecione para a página de criação ou edição conforme necessário
+    if (!empty($_SESSION['erros'])) {
+        $redirectURL = $isEditing ? "../../views/usuarios/editusuario.php?id=$idusuario" : "../../views/usuarios/addusuarios.php";
+        header("Location: $redirectURL");
+        exit();
+    }
 
-            if (mysqli_num_rows($resultVerificaCPF) > 0) {
-                // CPF já existe, redirecionar com uma mensagem de erro
-                header('Location: ../../views/usuarios/index.php?alert=cpf_ja_existe');
-            } else {
-                // Tratar o upload da imagem
-                if (isset($arquivo) && !file_exists('../../views/dist/img/' . $arquivo['name'])) {       
-        $destino = '../../views/dist/img/' . $arquivo['name']; // Caminho completo para salvar a imagem
-        $arquivo_tmp = $arquivo['tmp_name']; // Caminho temporário do arquivo
+    // Tratar o upload da imagem
+    $nomeimagem = 'dist/img/avatar.png'; // Imagem padrão
+    if ($arquivo && $arquivo['tmp_name']) {
+        $diretorio = '../../views/dist/img/';
+        $nomeArquivo = basename($arquivo['name']);
+        $caminhoCompleto = $diretorio . $nomeArquivo;
 
-        // Verifica se há um arquivo válido e se ele é uma imagem
-        if (!empty($arquivo_tmp)) {
-            // Mover o arquivo para o destino
-            if (move_uploaded_file($arquivo_tmp, $destino)) {
-                chmod($destino, 0644); // Definir permissões
-                $nomeimagem = 'dist/img/' . $arquivo['name']; // Caminho da imagem para salvar no banco
-            } else {
-                // Caso ocorra um erro ao mover o arquivo
-                echo "Erro ao mover o arquivo: " . $arquivo_tmp . " para " . $destino;
-                $nomeimagem = 'dist/img/avatar.png'; // Caminho padrão se o upload falhar
-            }
-        } else {
-            // Caso não haja imagem enviada
-            $nomeimagem = 'dist/img/avatar.png';
+        if (move_uploaded_file($arquivo['tmp_name'], $caminhoCompleto)) {
+            $nomeimagem = 'dist/img/' . $nomeArquivo;
         }
-
-    } elseif ($_POST['valor'] != NULL) {
-        // Caso uma imagem já exista ou o valor da imagem seja passado via POST
+    } elseif (isset($_POST['valor'])) {
+        // Use a imagem existente caso esteja definida
         $nomeimagem = $_POST['valor'];
-    } else {
-        // Se nenhuma imagem for enviada, define um avatar padrão
-        $nomeimagem = 'dist/img/avatar.png';
     }
-                // Se existir idusuario, realiza o update
-                if ($idusuario) {
-                    
-                    $queryEndereco = "SELECT endereco_idendereco FROM usuario WHERE idusuario = ?";
-                    $stmtEndereco = $connect->SQL->prepare($queryEndereco);
-                    $stmtEndereco->bind_param("i", $idusuario);
-                    $stmtEndereco->execute();
-                    $result = $stmtEndereco->get_result();
-                    $row = $result->fetch_assoc();
-                    $idendereco = $row['endereco_idendereco'];
 
-                    // Atualizar endereço
-                    $enderecos->updateEndereco($rua, $numero, $bairro, $cidade, $estado, $cep, $idendereco);
+    // Continue com o processo de inserção ou atualização do usuário
+    if ($isEditing) {
+        // Atualizar endereço
+        $queryEndereco = "SELECT endereco_idendereco FROM usuario WHERE idusuario = ?";
+        $stmtEndereco = $connect->SQL->prepare($queryEndereco);
+        $stmtEndereco->bind_param("i", $idusuario);
+        $stmtEndereco->execute();
+        $result = $stmtEndereco->get_result();
+        $row = $result->fetch_assoc();
+        $idendereco = $row['endereco_idendereco'];
 
-                    // Atualizar usuário
-                    $usuario->UpdateUsuario($idusuario, $username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $nomeimagem, $ativo);
+        $enderecos->updateEndereco($rua, $numero, $bairro, $cidade, $estado, $cep, $idendereco);
 
-                    header('Location: ../../views/usuarios/index.php?alert=update_sucesso'); // Sucesso no update
-                } else {
-                    // Inserir endereço primeiro
-                    $enderecoId = $enderecos->InsertEndereco($rua, $numero, $bairro, $cidade, $estado, $cep);
-                    if ($enderecoId) {
-                        // Inserir usuário com o ID do endereço
-                        $usuario->InsertUsuario($username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $enderecoId, $nomeimagem);
-                        header('Location: ../../views/usuarios/index.php?alert=sucesso'); // Sucesso no insert
-                    } else {
-                        header('Location: ../../views/usuarios/index.php?alert=erro_endereco'); // Erro ao inserir endereço
-                    }
-                }
-            }
+        // Atualizar usuário
+        $usuario->UpdateUsuario($idusuario, $username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $nomeimagem, $ativo);
+
+        $_SESSION['sucesso'] = "Usuário atualizado com sucesso!";
+    } else {
+        // Inserir novo endereço
+        $enderecoId = $enderecos->InsertEndereco($rua, $numero, $bairro, $cidade, $estado, $cep);
+        if ($enderecoId) {
+            // Inserir novo usuário com o ID do endereço
+            $usuario->InsertUsuario($username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $enderecoId, $nomeimagem);
+            $_SESSION['sucesso'] = "Usuário cadastrado com sucesso!";
+        } else {
+            $_SESSION['erros']['endereco'] = "Erro ao inserir endereço.";
+            header("Location: ../../views/usuarios/createusuario.php");
+            exit();
         }
-    } else {
-        header('Location: ../../views/usuarios/index.php?alert=campos_obrigatorios'); // Campos obrigatórios faltando
     }
+
+    // Limpe os dados de erro e formulário da sessão
+    unset($_SESSION['erros']);
+    unset($_SESSION['form_data']);
+    header("Location: ../../views/usuarios/index.php?alert=sucesso");
+    exit();
 } else {
     header('Location: ../../views/usuarios/index.php');
+    exit();
 }
+?>

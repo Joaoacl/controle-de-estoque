@@ -12,10 +12,22 @@ class Produtos extends Connect
  	
     public function index($value)
     {
-        $query = "SELECT * FROM `produto` WHERE `public` = 1 AND `ativo` = '$value'";
+        // Vamos definir um valor padrão para o início e o limite
+        $inicio = isset($_GET['inicio']) ? (int) $_GET['inicio'] : 0;
+        $limite = isset($_GET['limite']) ? (int) $_GET['limite'] : 20;
+
+        // Chamando a função de listar com paginação
+        $this->listarComPaginacao($value, $inicio, $limite);
+    }
+
+    // Função de listar com paginação
+    public function listarComPaginacao($value, $inicio, $limite)
+    {
+        $query = "SELECT * FROM `produto` WHERE `public` = 1 AND `ativo` = '$value' LIMIT $inicio, $limite";
         $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
     
         if ($result) {
+            $this->renderizarControlesPaginacao($value, $inicio, $limite);
             echo '<table class="table table-striped">';
             echo '<thead>
                     <tr>
@@ -32,13 +44,13 @@ class Produtos extends Connect
     
             while ($row = mysqli_fetch_array($result)) {
                 $ativo_class = ($row['ativo'] == 0) ? 'class="warning"' : '';
-                $quantidade_class = ($row['quantidade'] < 10) ? 'class="danger"' : '';
-                $text_quantidade_class = ($row['quantidade'] < 10) ? 'class="text-danger"' : '';
+                $quantidade_class = ($row['quantidade'] <= $row['quantidade_minima']) ? 'class="danger"' : '';
+                $text_quantidade_class = ($row['quantidade'] <= $row['quantidade_minima']) ? 'class="text-danger"' : '';
     
                 echo '<tr ' . $ativo_class . ' ' . $quantidade_class . '>';
                 echo '<td>' . $row['idproduto'] . '</td>';
                 echo '<td>' . $row['nome'] . '</td>';
-                echo '<td>' . $row['valor'] . '</td>';
+                echo '<td>R$ ' . $row['valor'] . '</td>';
                 echo '<td ' . $text_quantidade_class . '>' . $row['quantidade'] . '</td>';
                 echo '<td>' . $row['descricao'] . '</td>';
                 echo '<td>' . ($row['ativo'] == 1 ? 'Sim' : 'Não') . '</td>';
@@ -46,37 +58,56 @@ class Produtos extends Connect
                 echo '<td>
                         <a href="editproduto.php?id=' . $row['idproduto'] . '" class="btn btn-primary btn-sm">Editar</a>
                         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idproduto'] . '">Excluir</button>
-    
-                           <!-- Modal -->
-                      <div class="modal fade" id="deleteModal' . $row['idproduto'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idproduto'] . '" aria-hidden="true" >
-                          <div class="modal-dialog" role="document">
-                              <div class="modal-content">
-                                  <div class="modal-header">
-                                      <h5 class="modal-title" id="deleteModalLabel' . $row['idproduto'] . '">Excluir Produto</h5>
-                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                      </button>
-                                  </div>
-                                  <div class="modal-body">
-                                      Você tem certeza que deseja excluir o produto <strong>' . $row['nome'] . '</strong>?
-                                  </div>
-                                  <div class="modal-footer">
-                                      <form action="../../App/Database/delproduto.php" method="POST">
-                                          <input type="hidden" name="idproduto" value="' . $row['idproduto'] . '">
-                                          <button type="button" name="upload" value="Cancelar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                          <button type="submit" name="upload" value="Cadastrar" class="btn btn-danger">Excluir</button>
-                                      </form>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
                       </td>';
                 echo '</tr>';
             }
     
             echo '</tbody>';
             echo '</table>';
+
+            
         }
+    }
+
+    // Método para contar o número total de produtos
+    public function contarTotalProdutos($value) {
+        $query = "SELECT COUNT(*) as total FROM `produto` WHERE `public` = 1 AND `ativo` = '$value'";
+        $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+        $row = mysqli_fetch_assoc($result);
+        return $row['total'];
+    }
+
+    // Método para renderizar os controles de paginação
+    public function renderizarControlesPaginacao($value, $inicio, $limite) {
+        $totalProdutos = $this->contarTotalProdutos($value);
+        $totalPaginas = ceil($totalProdutos / $limite);
+        $paginaAtual = ($inicio / $limite) + 1;
+
+        echo '<ul class="pagination pagination-sm inline">';
+        
+        //if ($paginaAtual > 1) {
+            //echo '<li><a href="?inicio=' . ($inicio - $limite) . '&limite=' . $limite . '">&laquo;</a></li>';
+        //}
+
+        if ($paginaAtual > 1) {
+            echo '<li><a href="?inicio=' . ($inicio - $limite) . '&limite=' . $limite . '">&laquo;</a></li>';
+        } else {
+            echo '<li class="disabled"><a href="#">&laquo;</a></li>';
+        }
+
+        for ($i = 1; $i <= $totalPaginas; $i++) {
+            $inicioPagina = ($i - 1) * $limite;
+            $activeClass = ($i == $paginaAtual) ? 'class="active"' : '';
+            echo '<li ' . $activeClass . '><a href="?inicio=' . $inicioPagina . '&limite=' . $limite . '">' . $i . '</a></li>';
+        }
+
+        if ($paginaAtual < $totalPaginas) {
+            echo '<li><a href="?inicio=' . ($inicio + $limite) . '&limite=' . $limite . '">&raquo;</a></li>';
+        }else {
+            echo '<li class="disabled"><a href="#">&raquo;</a></li>';
+        }
+
+        echo '</ul>';
     }
     
   
@@ -134,19 +165,17 @@ class Produtos extends Connect
     }
 
 	
- 	public function InsertProdutos($nomeProduto, $descricao, $valor, $quantidade, $ativo){
+ 	public function InsertProdutos($nomeProduto, $descricao, $valor, $quantidade, $quantidade_minima, $ativo){
 
-		$valor = str_replace(',', '.', $valor);
+		//$valor = str_replace(',', '.', $valor);
 		
- 		$query = "INSERT INTO `produto`(`idproduto`, `nome`, `valor`, `quantidade`, `descricao`, `public`, `ativo`) VALUES (NULL,'$nomeProduto', '$valor', '$quantidade', '$descricao', '1', '$ativo')";
+ 		$query = "INSERT INTO `produto`(`idproduto`, `nome`, `valor`, `quantidade`, `descricao`, `public`, `ativo`, `quantidade_minima`) VALUES (NULL,'$nomeProduto', '$valor', '$quantidade', '$descricao', '1', '$ativo', '$quantidade_minima')";
  		if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
             $this->verificarEstoque($idproduto);
  			header('Location: ../../views/produto/index.php?alert=1');
  		}else{
  			header('Location: ../../views/produto/index.php?alert=0');
  		}
-
-
  	}
 
 	public function editProduto($idproduto){
@@ -158,8 +187,9 @@ class Produtos extends Connect
 				$valor = $row['valor'];
 				$quantidade = $row['quantidade'];
 				$descricao = $row['descricao'];
-        $ativo = $row['ativo'];
-				$array = array('Produto'=> [ 'nome' => $nomeProduto, 'valor' => $valor, 'quantidade' => $quantidade, 'descricao' => $descricao, 'ativo' => $ativo]);
+                $quantidade_minima = $row['quantidade_minima'];
+                $ativo = $row['ativo'];
+				$array = array('Produto'=> [ 'nome' => $nomeProduto, 'valor' => $valor, 'quantidade' => $quantidade, 'descricao' => $descricao, 'quantidade_minima' => $quantidade_minima, 'ativo' => $ativo]);
 				
 				return $array;
 			}
@@ -168,8 +198,8 @@ class Produtos extends Connect
 		}
 	}
 
-	public function updateProduto($idproduto, $nomeProduto, $valor, $quantidade, $descricao, $ativo){
-		$query = "UPDATE `produto` SET `nome` = '$nomeProduto', `valor` = '$valor', `quantidade` = '$quantidade', `descricao` = '$descricao', `ativo` = '$ativo' WHERE `idproduto` = '$idproduto'";
+	public function updateProduto($idproduto, $nomeProduto, $valor, $quantidade, $quantidade_minima, $descricao, $ativo){
+		$query = "UPDATE `produto` SET `nome` = '$nomeProduto', `valor` = '$valor', `quantidade` = '$quantidade', `descricao` = '$descricao', `quantidade_minima` = '$quantidade_minima', `ativo` = '$ativo' WHERE `idproduto` = '$idproduto'";
     	$result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 
     if ($result) {
