@@ -2,6 +2,9 @@
 require_once '../../App/auth.php';
 require_once '../../layout/script.php';
 require_once '../../App/Models/cliente.class.php';
+require_once '../../App/Models/config.class.php';
+
+$maxDesconto = $config->getMaxDesconto();
 
 echo $head;
 echo $header;
@@ -55,7 +58,7 @@ echo'
                   <input type="text" name="cpf" class="form-control" id="cpf" placeholder="CPF" value="' . $resp['Cliente']['cpf'] . '" maxlength="14" oninput="aplicarMascaraCPF(this)" required>
                 
                   <label for="email">Desconto (%)</label>
-                  <input type="number" name="desconto" class="form-control" id="desconto" placeholder="Percentual de desconto" value="' . $resp['Cliente']['desconto'] . '" min="0" max="10">
+                  <input type="number" name="desconto" class="form-control" id="desconto" placeholder="Percentual de desconto" value="' . $resp['Cliente']['desconto'] . '" min="0" max="'.$maxDesconto.'">
 
                   <label for="email">Email *</label>
                   <input type="email" name="email" class="form-control" id="email" placeholder="Email" value="' . $resp['Cliente']['email'] . '" maxlength="45" required>

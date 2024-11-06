@@ -87,25 +87,6 @@
     }
     
 
- 	public function listClientes($value = NULL){
-
- 		$query = "SELECT *FROM `cliente`";
- 		$result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
-
- 		if($result){
- 		
- 			while ($row = mysqli_fetch_array($result)) {
-                if($value == $row['idcliente']){ 
-                $selected = "selected";
-                }else{
-                $selected = "";
-                }
-                echo '<option value="'.$row['idcliente'].'" '.$selected.' >'.$row['nome'].'</option>';
-            }
-
- 	    }
-    }
-
  	public function InsertUsuario($username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $enderecoId, $pt_file){
 
  		$query = "INSERT INTO usuario (`nomeUsuario`, `cpf`, `salario`, `cargo`, `email`, `senha`, `telefone`, `permissao`, `endereco_idendereco`, `ativo`, `imagem`)

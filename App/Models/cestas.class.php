@@ -111,7 +111,7 @@
          }else{
            $selected = "";
          }
-          echo '<option value="'.$row['idcestaBasica'].'" '.$selected.' >'.$row['idcestaBasica'].' - '.$row['nome'].'</option>';
+          echo '<option value="'.$row['idcestaBasica'].'" '.$selected.' >'.$row['nome'].' | cód: '.$row['idcestaBasica'].'</option>';
         }
  
     }
@@ -203,9 +203,9 @@
       header('Location: ../../views/cestabasica/index.php?alert=1');
   }
 
-  public function InsertCestaVendida($idCesta, $idvenda, $data_venda)
+  public function InsertCestaVendida($idCesta, $idvenda, $data_venda, $quantidade)
   {
-      $query = "INSERT INTO `cestabasica_has_venda`(`cestaBasica_idcestaBasica`, `venda_idvenda`, `quantidade`, `dataVenda`) VALUES ('$idCesta','$idvenda', '1', '$data_venda')";
+      $query = "INSERT INTO `cestabasica_has_venda`(`cestaBasica_idcestaBasica`, `venda_idvenda`, `quantidade`, `dataVenda`) VALUES ('$idCesta','$idvenda', '$quantidade', '$data_venda')";
         if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
 
           header('Location: ../../views/vendas/index.php?alert=1');

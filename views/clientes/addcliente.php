@@ -1,6 +1,9 @@
 <?php
 require_once '../../App/auth.php';
 require_once '../../layout/script.php';
+require_once '../../App/Models/config.class.php';
+
+$maxDesconto = $config->getMaxDesconto();
 
 echo $head;
 echo $header;
@@ -49,7 +52,7 @@ echo ' <a href="./" class="btn btn-success">Voltar</a>
                   <label for="desconto">Desconto (%)</label></br>
                   
                   <input type="checkbox" id="descontoCheckbox" onclick="toggleDesconto()">  <label for="descontoCheckbox">Aplicar Desconto</label></br>
-                  <input type="number" name="desconto" class="form-control" id="desconto" placeholder="Percentual de desconto" min="0" max="10" disabled>
+                  <input type="number" name="desconto" class="form-control" id="desconto" placeholder="Percentual de desconto" min="0" max="'.$maxDesconto.'" disabled>
                   
 
                   
@@ -116,26 +119,23 @@ echo $javascript;
 </style>
 
 <script>
-    // Máscara para telefone no formato (99) 99999-9999
     function aplicarMascaraTelefone(input) {
-        let valor = input.value.replace(/\D/g, ''); // Remove tudo que não é dígito
-        valor = valor.replace(/^(\d{2})(\d)/g, '($1) $2'); // Coloca parênteses em volta dos dois primeiros dígitos
-        valor = valor.replace(/(\d{5})(\d)/, '$1-$2'); // Coloca o traço depois dos cinco primeiros dígitos
-        input.value = valor;
+      let valor = input.value.replace(/\D/g, ''); 
+      valor = valor.replace(/^(\d{2})(\d)/g, '($1) $2'); 
+      valor = valor.replace(/(\d{5})(\d)/, '$1-$2'); 
+      input.value = valor;
     };
-
-    // Máscara para CPF no formato 999.999.999-99
+    
     function aplicarMascaraCPF(input) {
-        let valor = input.value.replace(/\D/g, ''); // Remove tudo que não é dígito
-        valor = valor.replace(/(\d{3})(\d)/, '$1.$2'); // Coloca um ponto após os três primeiros dígitos
-        valor = valor.replace(/(\d{3})(\d)/, '$1.$2'); // Coloca outro ponto após o terceiro dígito
-        valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Coloca um traço antes dos dois últimos dígitos
-        input.value = valor;
+      let valor = input.value.replace(/\D/g, ''); 
+      valor = valor.replace(/(\d{3})(\d)/, '$1.$2'); 
+      valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+      valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); 
+      input.value = valor;
     };
 
-    // Campo de senha sem máscara, mas transformado em password (esconde os caracteres)
     function esconderSenha(input) {
-        input.type = 'password';
+      input.type = 'password';
     };
 
     function handleInput(e) {
@@ -146,59 +146,53 @@ echo $javascript;
     e.target.selectionEnd = se;
     };
 
-    // Máscara para CEP no formato 99999-999
     function aplicarMascaraCEP(input) {
-    let valor = input.value.replace(/\D/g, ''); // Remove tudo que não é dígito
-    valor = valor.replace(/^(\d{5})(\d)/, '$1-$2'); // Coloca um traço entre o quinto e o sexto dígito
+    let valor = input.value.replace(/\D/g, '');
+    valor = valor.replace(/^(\d{5})(\d)/, '$1-$2');
     input.value = valor;
     };
 
     function validarFormulario() {
-            var email = document.forms["meuFormulario"]["email"].value;
-            var confirmar_email = document.forms["meuFormulario"]["confirmar_email"].value;
-  
+      var email = document.forms["meuFormulario"]["email"].value;
+      var confirmar_email = document.forms["meuFormulario"]["confirmar_email"].value;
 
-            var errorEmail = document.getElementById("errorEmail");
-          
+      var errorEmail = document.getElementById("errorEmail");     
 
-            var formValido = true;
+      var formValido = true;
 
-            // Validação de Email
-            if (email !== confirmar_email) {
-                errorEmail.textContent = "Os emails não correspondem.";
-                formValido = false; // Bloqueia o envio
-            } else {
-                errorEmail.textContent = ""; // Limpa a mensagem de erro
-            }
+      if (email !== confirmar_email) {
+        errorEmail.textContent = "Os emails não correspondem.";
+        formValido = false;
+      } else {
+        errorEmail.textContent = ""; 
+      }
 
+      botaoSubmit.disabled = !formValido;
 
-            botaoSubmit.disabled = !formValido;
-
-            // Retorna se o formulário é válido ou não
-            return formValido;
+      return formValido;
     };
 
     function toggleDesconto() {
-        var checkbox = document.getElementById('descontoCheckbox');
-        var descontoInput = document.getElementById('desconto');
+      var checkbox = document.getElementById('descontoCheckbox');
+      var descontoInput = document.getElementById('desconto');
+      var maxDesconto = <?php echo $maxDesconto; ?>;
 
-        // Se o checkbox estiver marcado, habilita o input de desconto
-        if (checkbox.checked) {
-            descontoInput.disabled = false;
-        } else {
-            descontoInput.disabled = true;
-            descontoInput.value = ''; // Limpa o valor do input se o checkbox for desmarcado
-        }
-    };
+      if (checkbox.checked) {
+        descontoInput.disabled = false;
+        descontoInput.max = maxDesconto;
+      } else {
+        descontoInput.disabled = true;
+        descontoInput.value = '';
+      }
+    } 
 
     function inicializarValidacao() {
-        var inputs = document.querySelectorAll('input');
-        inputs.forEach(input => {
-            input.addEventListener('input', validarFormulario);
-        });
+      var inputs = document.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.addEventListener('input', validarFormulario);
+      });
     };
 
-        // Inicializa a validação quando a página é carregada
-        window.onload = inicializarValidacao;
+    window.onload = inicializarValidacao;
 
 </script>

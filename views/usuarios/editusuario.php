@@ -3,6 +3,7 @@ require_once '../../App/auth.php';
 require_once '../../layout/script.php';
 require_once '../../App/Models/usuario.class.php';
 
+
 echo $head;
 echo $header;
 echo $aside;

@@ -89,7 +89,7 @@
 
  	public function listFornecedores($value = NULL){
 
-			$query = "SELECT *FROM `fornecedor`";
+			$query = "SELECT *FROM `fornecedor` WHERE `public` = 1 AND `ativo` = 1";
 			$result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
 
 			if($result){
@@ -100,7 +100,7 @@
 			}else{
 			$selected = "";
 			}
-					echo '<option value="'.$row['idfornecedor'].'" '.$selected.' >'.$row['nome'].'</option>';
+					echo '<option value="'.$row['idfornecedor'].'" '.$selected.' >'.$row['nome'].' - cód: '.$row['idfornecedor'].'</option>';
 				}
 
 		}

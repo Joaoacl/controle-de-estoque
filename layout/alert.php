@@ -17,6 +17,8 @@ if (isset($_GET['alert'])) {
 		echo '<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>Venda realizada com sucesso!</div>';
 	}elseif ($_GET['alert'] == 'estoque_insuficiente') {
 		echo '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>Erro ao realizar a venda ou estoque insuficiente.!</div>';
+	}elseif ($_GET['alert'] == 'venda_cancelada') {
+		echo '<div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>Venda cancelada!</div>';
 	}
   };
 

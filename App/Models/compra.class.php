@@ -9,10 +9,23 @@ class Compras extends Connect
 {
     public function index($value)
     {
-        $query = "SELECT sc.idsolicitaCompra, sc.dataEntrega, sc.quantidade, sc.produto_idproduto, sc.fornecedor_idfornecedor, sc.ativo, f.nome AS nome_fornecedor
-                FROM `solicitacompra` sc 
-                JOIN `fornecedor` f ON sc.fornecedor_idfornecedor = f.idfornecedor
-                WHERE sc.ativo = '$value'";
+        $query = "SELECT 
+                    c.idcompra, 
+                    c.fornecedor_idfornecedor, 
+                    c.dataCompra, 
+                    c.ativo, 
+                    f.nome AS nome_fornecedor,
+                    GROUP_CONCAT(CONCAT(p.nome) SEPARATOR ' | ') AS itensComprados,
+                    GROUP_CONCAT(CONCAT(p.nome, ' - Qtd: ', cp.quantidade) SEPARATOR '<br>') AS detalhesItensComprados
+                FROM 
+                    `compra` c 
+                    JOIN `fornecedor` f ON c.fornecedor_idfornecedor = f.idfornecedor
+                    JOIN `compra_has_produto` cp ON c.idcompra = cp.compra_id
+                    JOIN `produto` p ON cp.produto_id = p.idproduto
+                WHERE 
+                    c.ativo = '$value' AND c.public = 1
+                GROUP BY 
+                    c.idcompra";
 
         $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 
@@ -20,11 +33,10 @@ class Compras extends Connect
             echo '<table class="table table-striped">';
             echo '<thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Produtos Solicitados</th>
-                        <th>Quantidade</th>
+                        <th>ID</th>                
+                        <th>Produtos</th>
                         <th>Fornecedor</th>
-                        <th>Previsão Entrega</th>
+                        <th>Data Compra</th>
                         <th>Status</th>                       
                         <th>Opções</th>
                     </tr>
@@ -34,61 +46,62 @@ class Compras extends Connect
             while ($row = mysqli_fetch_array($result)) {
                 $ativo_class = ($row['ativo'] == 0) ? 'class="success"' : '';
                 echo '<tr ' . $ativo_class . '>';
-                echo '<td>' . $row['idsolicitaCompra'] . '</td>';
-                echo '<td>' . $row['produto_idproduto'] . '</td>';
-                echo '<td>' . $row['quantidade'] . '</td>';
+                echo '<td>' . $row['idcompra'] . '</td>';
+                echo '<td>' . $row['itensComprados'] . '</td>'; // Exibe todos os itens comprados em uma única célula
                 echo '<td>' . $row['nome_fornecedor'] . '</td>';
-                echo '<td>' . date('d/m/Y', strtotime($row['dataEntrega'])) .  '</td>';
+                echo '<td>' . date('d/m/Y', strtotime($row['dataCompra'])) . '</td>';
                 echo '<td>' . ($row['ativo'] == 1 ? 'Em andamento' : 'Entregue') . '</td>';
                 
                 // Botões de opções, incluindo o botão para abrir o modal de Visualizar
                 echo '<td>
-                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#viewModal' . $row['idsolicitaCompra'] . '">Visualizar</button>';
+                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#viewModal' . $row['idcompra'] . '">Visualizar</button>
                         
-                        //<button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idvenda'] . '">Excluir</button>
+                        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idcompra'] . '">Cancelar</button>
                         
-                    echo'</td>';
+                    </td>';
                 echo '</tr>';
 
-                // Modal informações da venda
-                echo '<div class="modal fade" id="viewModal' . $row['idsolicitaCompra'] . '" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel' . $row['idsolicitaCompra'] . '" aria-hidden="true">
+                
+
+                // Modal informações da compra
+                echo '<div class="modal fade" id="viewModal' . $row['idcompra'] . '" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel' . $row['idcompra'] . '" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header bg-primary text-white">
-                                    <h4 class="modal-title" id="viewModalLabel' . $row['idsolicitaCompra'] . '">Detalhes da Compra</h4>
+                                    <h4 class="modal-title" id="viewModalLabel' . $row['idcompra'] . '">Detalhes da Compra</h4>
                                 </div>
                                 <div class="modal-body">
-                                    <p><strong>ID da Solicitação:</strong> ' . $row['idsolicitaCompra'] . '</p>
+                                    <p><strong>ID da Solicitação:</strong> ' . $row['idcompra'] . '</p>
                                     <h4><strong>Itens da compra</strong></h4>
-                                    <p><strong>Produto:</strong> ' . $row['produto_idproduto'] . '</p>
-                                    <p><strong>Quantidade:</strong> ' . $row['quantidade'] . '</p>
-                                    <p><strong>Fornecedor:</strong> ' . $row['fornecedor_idfornecedor']. '</p>
-                                    <p><strong>Previsão de Entrega:</strong> ' . date('d/m/Y', strtotime($row['dataEntrega'])) . '</p>
-                                    
+                                    <p>' . $row['detalhesItensComprados'] . '</p>
+                                    <p><strong>Fornecedor:</strong> ' . $row['nome_fornecedor'] . '</p>
+                                    <p><strong>Data da Compra:</strong> ' . date('d/m/Y', strtotime($row['dataCompra'])) . '</p>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-success" data-dismiss="modal">Concluir</button>
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>    
+                                <div class="modal-footer">';
+                                if($row['ativo'] == 1){
+                                    echo'<button type="button" class="btn btn-success" data-dismiss="modal">Concluir</button>';
+                                }
+                                    echo'<button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>    
                                 </div>
                             </div>
                         </div>
                     </div>';
-
+                
                 // Modal de Exclusão
-                echo '<div class="modal fade" id="deleteModal' . $row['idsolicitaCompra'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idsolicitaCompra'] . '" aria-hidden="true">
+                echo '<div class="modal fade" id="deleteModal' . $row['idcompra'] . '" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel' . $row['idcompra'] . '" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title" id="deleteModalLabel' . $row['idsolicitaCompra'] . '">Excluir Venda</h5>
+                                    <h5 class="modal-title" id="deleteModalLabel' . $row['idcompra'] . '">Excluir Compra</h5>
                                 </div>
                                 <div class="modal-body">
-                                    Você tem certeza que deseja excluir a venda <strong>' . $row['idsolicitaCompra'] . '</strong>?
+                                    Você tem certeza que deseja cancelar a compra ID: <strong>' . $row['idcompra'] . '</strong>?
                                 </div>
                                 <div class="modal-footer">
-                                    <form action="../../App/Database/delvenda.php" method="POST">
-                                        <input type="hidden" name="idsolicitaCompra" value="' . $row['idsolicitaCompra'] . '">
+                                    <form action="../../App/Database/delcompra.php" method="POST">
+                                        <input type="hidden" name="idcompra" value="' . $row['idcompra'] . '">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                        <button type="submit" name="upload" value="Cadastrar" class="btn btn-danger">Excluir</button>
+                                        <button type="submit" name="upload" value="Cadastrar"  class="btn btn-danger">Cancelar</button>
                                     </form>
                                 </div>
                             </div>
@@ -102,41 +115,17 @@ class Compras extends Connect
     }
 
 
-    public function InsertVenda($cliente, $valor_total, $data_venda, $idCesta)
-    {      
-        if (!$this->quantidadeEstoque($idCesta)) {
-            header('Location: ../../views/vendas/index.php?alert=estoque_insuficiente');
-            return false;
-        }
-
-        $query = "INSERT INTO `venda`(`valorTotal`, `cliente_idcliente`, `dataVenda`, `public`) 
-                VALUES ('$valor_total','$cliente', '$data_venda', '1')";
-        if (mysqli_query($this->SQL, $query)) {
-            $idVenda = mysqli_insert_id($this->SQL);
-            // Seleciona os produtos e quantidades da cesta
-            $queryProdutosCesta = "SELECT produto_idproduto, quantidade 
-                                FROM cestabasica_has_produto 
-                                WHERE cestaBasica_idcestaBasica = $idCesta";
-            $resultProdutosCesta = mysqli_query($this->SQL, $queryProdutosCesta) or die(mysqli_error($this->SQL));
-
-            // Atualiza o estoque de cada produto na cesta
-            while ($produto = mysqli_fetch_assoc($resultProdutosCesta)) {
-                $idproduto = $produto['produto_idproduto'];
-                $quantidadeVendida = $produto['quantidade'];
-
-                // Reduz a quantidade no estoque do produto
-                $queryUpdateEstoque = "UPDATE `produto` SET `quantidade` = `quantidade` - $quantidadeVendida 
-                                    WHERE `idproduto` = $idproduto";
-                mysqli_query($this->SQL, $queryUpdateEstoque) or die(mysqli_error($this->SQL));
-
-                $this->verificarEstoque($idproduto);
-            }
-
-            return $idVenda;
-        } else {
-            return false;
-        }
+    public function insertCompra($fornecedor) {
+        $query = "INSERT INTO compra (fornecedor_idfornecedor, dataCompra, ativo) VALUES ('$fornecedor', NOW(), '1')";
+        mysqli_query($this->SQL, $query);
+        return mysqli_insert_id($this->SQL);
     }
+    
+    public function insertProdutoCompra($idCompra, $idProduto, $quantidade) {
+        $query = "INSERT INTO compra_has_produto (compra_id, produto_id, quantidade) VALUES ('$idCompra', '$idProduto', '$quantidade')";
+        mysqli_query($this->SQL, $query);
+    }
+    
 
 
     public function verificarEstoque($idproduto) {
@@ -151,46 +140,13 @@ class Compras extends Connect
         }
     }
 
-    public function quantidadeEstoque($idCesta)
+
+    public function deleteCompra($idcompra)
     {
-        // Seleciona os produtos e quantidades necessários para a cesta
-        $query = "SELECT p.idproduto, p.quantidade, chp.quantidade AS quantidadeNecessaria
-                  FROM produto p
-                  JOIN cestabasica_has_produto chp ON p.idproduto = chp.produto_idproduto
-                  WHERE chp.cestaBasica_idcestaBasica = $idCesta";
-        $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
-
-        // Verifica cada produto para garantir que há estoque suficiente
-        while ($produto = mysqli_fetch_assoc($result)) {
-            if ($produto['quantidade'] < $produto['quantidadeNecessaria']) {
-                // Se o estoque for insuficiente, retorna falso
-                return false;
-            }
-        }
-        // Se todos os produtos têm estoque suficiente, retorna verdadeiro
-        return true;
-    }
-    
-
-    public function updateVenda($idvenda, $cliente, $data, $valor_total, $ativo)
-    {
-        $query = "UPDATE `vendas` SET 
-                  `cliente`= '$cliente', 
-                  `data`= '$data',
-                  `valor_total`= '$valor_total', 
-                  `ativo` = '$ativo' 
-                  WHERE `idvenda`= '$idvenda'";
-        mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
-
-        header('Location: ../../views/vendas/index.php?alert=1');
-    }
-
-    public function deleteVenda($idvenda)
-    {
-        $query = "UPDATE `venda` SET `public` = 0 WHERE `idvenda` = '$idvenda'";
+        $query = "UPDATE `compra` SET `public` = 0 WHERE `idcompra` = '$idcompra'";
         mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
         
-        header('Location: ../../views/vendas/index.php?alert=deletado');
+        header('Location: ../../views/compras/index.php?alert=deletado');
     }
 }
 

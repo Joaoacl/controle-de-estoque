@@ -115,8 +115,8 @@ echo '
                 <label for="exampleInputEmail1">Permissão *</label>
                 <select class="form-control" name="permissao" type="permissao" value="' .htmlspecialchars($formData['permissao'] ?? '').'" required>
                 <option value="">Escolha a Permissão do Usuário</option>
-                <option value="1">Administrador</option>
-                <option value="2">Vendedor</option>
+                <option value="1" '.((isset($formData['permissao']) && $formData['permissao'] == 1) ? 'selected' : '').'>Administrador</option>
+                <option value="2" '.((isset($formData['permissao']) && $formData['permissao'] == 2) ? 'selected' : '').'>Vendedor</option>
                 </select>
 
                 <label for="exampleInputEmail1">Imagem</label>

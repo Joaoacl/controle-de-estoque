@@ -36,14 +36,40 @@ echo '<div class="content-wrapper">
             <!-- /.box-header -->
             <div class="box-body">
               <ul class="todo-list">';
-                          
-              $vendas->index();
+              $btn_color = "btn-warning";
+              $icon = "fa fa-ban";
+
+              if(isset($_POST['public']) != NULL){               
+
+                $value = $_POST['public']; 
+                if($value == 1){
+                 
+                  $public = 0;
+                  $button_name = "Canceladas";              
+      
+                }else{
+                  $public = 1;
+                  $button_name = "Ativas";
+                  $icon = "fa-check";
+                  $btn_color = "btn-primary";
+                }     
+      
+              }else{
+                $value = 1;
+                $public = 0;
+                $button_name = "Cancelados";
+              }
+              $vendas->index($value);
               
         echo '</ul>
             </div>
             <!-- /.box-body -->
             <div class="box-footer clearfix no-border">
               <a href="'.$url.'vendas/addvenda.php" type="button" class="btn btn-success pull-right"><i class="fa fa-cart-plus"></i> Fazer Venda</a>
+
+              <form action="index.php" method="post">
+              <button name="public" type="submit" value="'.$public.'" class="btn '.$btn_color.' pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button>
+              </form>
             </div>
           </div>
 ';

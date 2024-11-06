@@ -2,17 +2,10 @@
 require_once '../auth.php';
 require_once '../Models/venda.class.php';
 
-if (isset($_POST['upload']) && $_POST['upload'] == 'Cadastrar') {
-    
+$vendas = new Vendas;
+
+if (isset($_POST['idvenda'])) {
     $idvenda = $_POST['idvenda'];
-
-    $vendas->deleteVenda($idvenda);
-
-
-
-} else {
-    header('Location: ../../views/produto/index.php'); // 
+    $vendas->cancelarVenda($idvenda);
 }
-
-
 ?>

@@ -8,15 +8,15 @@ require_once '../Models/connect.php';
 $enderecos = new Enderecos();
 $connect = new Connect();
 
-$idusuario = $_POST['idusuario'] ?? null; // Verifica se é edição
-$isEditing = !empty($idusuario); // Variável para distinguir entre criação e edição
+$idusuario = $_POST['idusuario'] ?? null;
+$isEditing = !empty($idusuario);
 
-// Inicialize arrays para erros e dados do formulário
+
 $_SESSION['erros'] = [];
-$_SESSION['form_data'] = $_POST; // Armazene os dados enviados pelo formulário
+$_SESSION['form_data'] = $_POST; 
 
 function emailJaExiste($email, $conexao, $idusuario = null) {
-    // Verifica se o e-mail já existe no banco
+   
     $queryVerificaEmail = "SELECT * FROM usuario WHERE email = ?";
     if ($idusuario) {
         $queryVerificaEmail .= " AND idusuario != ?";
@@ -29,7 +29,7 @@ function emailJaExiste($email, $conexao, $idusuario = null) {
 }
 
 function cpfJaExiste($cpf, $conexao, $idusuario = null) {
-    // Verifica se o CPF já existe no banco
+
     $queryVerificaCPF = "SELECT * FROM usuario WHERE cpf = ?";
     if ($idusuario) {
         $queryVerificaCPF .= " AND idusuario != ?";
@@ -53,7 +53,6 @@ if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
     $ativo = $_POST['ativo'];
     $arquivo = $_FILES['arquivo'] ?? null;
     
-    // Endereço
     $rua = $_POST['rua'];
     $numero = $_POST['numero'];
     $bairro = $_POST['bairro'];
@@ -61,17 +60,14 @@ if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
     $estado = $_POST['estado'];
     $cep = $_POST['cep'];
 
-    // Verifique se o email já existe
     if (emailJaExiste($email, $connect, $idusuario)) {
         $_SESSION['erros']['email'] = "O email já existe no sistema.";
     }
 
-    // Verifique se o CPF já existe
     if (cpfJaExiste($cpf, $connect, $idusuario)) {
         $_SESSION['erros']['cpf'] = "O CPF já existe no sistema.";
     }
 
-    // Se houver erros, redirecione para a página de criação ou edição conforme necessário
     if (!empty($_SESSION['erros'])) {
         $redirectURL = $isEditing ? "../../views/usuarios/editusuario.php?id=$idusuario" : "../../views/usuarios/addusuarios.php";
         header("Location: $redirectURL");
@@ -89,11 +85,10 @@ if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
             $nomeimagem = 'dist/img/' . $nomeArquivo;
         }
     } elseif (isset($_POST['valor'])) {
-        // Use a imagem existente caso esteja definida
         $nomeimagem = $_POST['valor'];
     }
 
-    // Continue com o processo de inserção ou atualização do usuário
+   
     if ($isEditing) {
         // Atualizar endereço
         $queryEndereco = "SELECT endereco_idendereco FROM usuario WHERE idusuario = ?";
@@ -124,7 +119,6 @@ if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
         }
     }
 
-    // Limpe os dados de erro e formulário da sessão
     unset($_SESSION['erros']);
     unset($_SESSION['form_data']);
     header("Location: ../../views/usuarios/index.php?alert=sucesso");

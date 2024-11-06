@@ -1,7 +1,7 @@
 <?php
 require_once '../../App/auth.php';
 require_once '../../layout/script.php';
-require_once '../../App/Models/usuario.class.php'; //models cliente
+require_once '../../App/Models/usuario.class.php'; 
 
 echo $head;
 echo $header;
@@ -71,9 +71,10 @@ echo '<div class="content-wrapper">
             <!-- /.box-body -->
             <div class="box-footer clearfix no-border">
               <a href="addusuarios.php" type="button" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add Usuário</a>
+
               <form action="index.php" method="post">
-             
-              <button name="ativo" type="submit" value="'.$ativo.'" class="btn '.$btn_color.' pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button></form>
+              <button name="ativo" type="submit" value="'.$ativo.'" class="btn '.$btn_color.' pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button>
+              </form>
              
             </div>
           </div>

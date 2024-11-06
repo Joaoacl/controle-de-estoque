@@ -35,7 +35,7 @@
 				echo '<td>' . $row['idcliente'] . '</td>';
 				echo '<td>' . $row['nome'] . '</td>';
 				echo '<td>' . $row['telefone'] . '</td>';
-				echo '<td>' . ($row['desconto'] == null ? 'Sem Desconto' : $row['desconto']). '</td>';
+				echo '<td>' . ($row['desconto'] == 0 ? 'Sem Desconto' : $row['desconto']). '</td>';
 				echo '<td>' . ($row['ativo'] == 1 ? 'Sim' : 'Não') . '</td>';
 				
 				echo '<td>
@@ -77,7 +77,7 @@
 
  	public function listClientes($value = NULL){
 
-			$query = "SELECT *FROM `cliente`";
+			$query = "SELECT *FROM `cliente` WHERE `public` = 1 AND `ativo` = 1";
 			$result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
 
 			if($result){
@@ -88,7 +88,7 @@
 			}else{
 			$selected = "";
 			}
-					echo '<option value="'.$row['idcliente'].'" '.$selected.' >'.$row['idcliente'].' - '.$row['nome'].'</option>';
+					echo '<option value="'.$row['idcliente'].'" '.$selected.' >'.$row['nome'].' - id: '.$row['idcliente'].'</option>';
 				}
 
 		}

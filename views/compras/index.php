@@ -66,7 +66,7 @@ echo '<div class="content-wrapper">
             </div>
             <!-- /.box-body -->
             <div class="box-footer clearfix no-border">
-              <a href="'.$url.'vendas/addvenda.php" type="button" class="btn btn-success pull-right"><i class="fa fa-cart-arrow-down"></i> Solicitar Compra</a>
+              <a href="'.$url.'compras/addcompra.php" type="button" class="btn btn-success pull-right"><i class="fa fa-cart-arrow-down"></i> Solicitar Compra</a>
               <form action="index.php" method="post">
               <button name="ativo" type="submit" value="'.$ativo.'" class="btn '.$btn_color.' pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button></form>
             </div>

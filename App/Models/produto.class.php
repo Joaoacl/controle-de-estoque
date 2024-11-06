@@ -112,7 +112,7 @@ class Produtos extends Connect
     
   
 
-  public function listProdutosCheckbox($produtosSelecionados = []) {
+    public function listProdutosCheckbox($produtosSelecionados = []) {
     $query = "SELECT * FROM `produto` WHERE `ativo` = 1 AND `public` = 1";
     $result = mysqli_query($this->SQL, $query) or die (mysqli_error($this->SQL));
 
@@ -220,6 +220,25 @@ class Produtos extends Connect
                 $_SESSION['notificacoes'][] = "O produto " . $produto['nome'] . " está com estoque baixo. Apenas " . $produto['quantidade'] . " unidades restantes.";
             }
         }
+    }
+
+
+    public function listProdutos(){
+        $query = "SELECT *FROM `produto` WHERE `public` = 1 AND `ativo` = 1";
+			$result = mysqli_query($this->SQL, $query) or die ( mysqli_error($this->SQL));
+
+			if($result){
+			
+				while ($row = mysqli_fetch_array($result)) {
+			if($value == $row['idproduto']){ 
+			$selected = "selected";
+			}else{
+			$selected = "";
+			}
+					echo '<option value="'.$row['idproduto'].'" '.$selected.' >'.$row['nome'].' - cód: '.$row['idproduto'].'</option>';
+				}
+
+		}
     }
 	
 

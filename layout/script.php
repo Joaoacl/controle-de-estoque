@@ -49,11 +49,6 @@ $head = '<!DOCTYPE html>
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="'.$url.'plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn\'t work if you view the page via file:// -->
@@ -248,8 +243,7 @@ $aside = '<aside class="main-sidebar">
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="'.$url.'config/"><i class="fa fa-list-ul"></i> Percentual de Desconto</a></li>
-            <li><a href="'.$url.'usuarios/addusuarios.php"><i class="fa fa-user-plus"></i> Add Usuário</a></li>
+            <li><a href="'.$url.'configuracao/"><i class="fa fa-list-ul"></i> Percentual de Desconto</a></li>
           </ul>
         </li>
 
@@ -466,6 +460,10 @@ $javascript = '
 <script src="'.$url.'plugins/jQuery/jquery-2.2.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.min.js"></script>
 
+<!-- Select2 CSS e JS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
 <!-- jQuery UI 1.11.4 -->
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -493,7 +491,6 @@ $javascript = '
 <script src="'.$url.'plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
 <!-- Slimscroll -->
 <script src="'.$url.'plugins/slimScroll/jquery.slimscroll.min.js"></script>
-
 
 <!-- FastClick -->
 <script src="'.$url.'plugins/fastclick/fastclick.js"></script>
@@ -614,5 +611,6 @@ function removerEspacos() {
         input.value = input.value.trim(); // Remove os espaços em branco no início e no final
     });
 };
+
 
 </script>
