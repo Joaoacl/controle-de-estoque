@@ -50,13 +50,13 @@ class Vendas extends Connect
                 echo '<td>R$ ' . $row['valorTotal'] . '</td>';   
                 echo '<td>' . date('d/m/Y', strtotime($row['dataVenda'])) . '</td>';
                 
-                // Botões de opções, incluindo o botão para abrir o modal de Visualizar
+             
                 echo '<td>
-                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#viewModal' . $row['idvenda'] . '">Visualizar</button>
-                        
-                        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idvenda'] . '">Cancelar</button>
-                        
-                    </td>';
+                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#viewModal' . $row['idvenda'] . '">Visualizar</button>';
+                        if($row['public'] == 1){
+                        echo' <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal' . $row['idvenda'] . '">Cancelar</button>';
+                        }
+                    echo'</td>';
                 echo '</tr>';
 
                 // Modal informações da venda
@@ -119,58 +119,71 @@ class Vendas extends Connect
 
     public function InsertVenda($cliente, $valor_total, $data_venda, $cestasSelecionadas, $cestas)
     {
-        // Variável para controle de estoque insuficiente
-        $estoqueInsuficiente = false;
+      
+        $produtosNecessarios = [];
 
-        // Verifica a disponibilidade de estoque para cada cesta selecionada
+      
         foreach ($cestasSelecionadas as $cesta) {
             $idCesta = $cesta['id'];
             $quantidade = $cesta['quantidade'];
-            
-            if (!$this->quantidadeEstoque($idCesta, $quantidade)) {
+
+           
+            $queryProdutosCesta = "SELECT produto_idproduto, quantidade 
+                                FROM cestabasica_has_produto 
+                                WHERE cestaBasica_idcestaBasica = $idCesta";
+            $resultProdutosCesta = mysqli_query($this->SQL, $queryProdutosCesta) or die(mysqli_error($this->SQL));
+
+            while ($produto = mysqli_fetch_assoc($resultProdutosCesta)) {
+                $idproduto = $produto['produto_idproduto'];
+                $quantidadeNecessaria = $produto['quantidade'] * $quantidade;
+
+               
+                if (isset($produtosNecessarios[$idproduto])) {
+                    $produtosNecessarios[$idproduto] += $quantidadeNecessaria;
+                } else {
+                    $produtosNecessarios[$idproduto] = $quantidadeNecessaria;
+                }
+            }
+        }
+
+        
+        $estoqueInsuficiente = false;
+        foreach ($produtosNecessarios as $idproduto => $quantidadeTotalNecessaria) {
+            $queryEstoque = "SELECT quantidade FROM produto WHERE idproduto = $idproduto";
+            $resultEstoque = mysqli_query($this->SQL, $queryEstoque) or die(mysqli_error($this->SQL));
+            $produto = mysqli_fetch_assoc($resultEstoque);
+
+            if ($produto['quantidade'] < $quantidadeTotalNecessaria) {
                 $estoqueInsuficiente = true;
                 break;
             }
         }
 
-        // Se o estoque for insuficiente, redireciona e encerra o processo
+       
         if ($estoqueInsuficiente) {
             header('Location: ../../views/vendas/index.php?alert=estoque_insuficiente');
             return false;
         }
 
-        // Insere a venda na tabela `venda`
+      
         $query = "INSERT INTO `venda`(`valorTotal`, `cliente_idcliente`, `dataVenda`, `public`) 
                 VALUES ('$valor_total', '$cliente', '$data_venda', '1')";
         if (mysqli_query($this->SQL, $query)) {
             $idVenda = mysqli_insert_id($this->SQL);
 
-            // Processa cada cesta selecionada
+            
+            foreach ($produtosNecessarios as $idproduto => $quantidadeTotalNecessaria) {
+                $queryUpdateEstoque = "UPDATE `produto` SET `quantidade` = `quantidade` - $quantidadeTotalNecessaria 
+                                    WHERE `idproduto` = $idproduto";
+                mysqli_query($this->SQL, $queryUpdateEstoque) or die(mysqli_error($this->SQL));
+
+                $this->verificarEstoque($idproduto);
+            }
+
+            
             foreach ($cestasSelecionadas as $cesta) {
                 $idCesta = $cesta['id'];
                 $quantidade = $cesta['quantidade'];
-
-                // Seleciona os produtos e quantidades da cesta para atualizar o estoque
-                $queryProdutosCesta = "SELECT produto_idproduto, quantidade 
-                                    FROM cestabasica_has_produto 
-                                    WHERE cestaBasica_idcestaBasica = $idCesta";
-                $resultProdutosCesta = mysqli_query($this->SQL, $queryProdutosCesta) or die(mysqli_error($this->SQL));
-
-                // Atualiza o estoque de cada produto na cesta com base na quantidade vendida
-                while ($produto = mysqli_fetch_assoc($resultProdutosCesta)) {
-                    $idproduto = $produto['produto_idproduto'];
-                    $quantidadeVendida = $produto['quantidade'] * $quantidade; // Quantidade total do produto vendido
-
-                    // Reduz a quantidade no estoque do produto
-                    $queryUpdateEstoque = "UPDATE `produto` SET `quantidade` = `quantidade` - $quantidadeVendida 
-                                        WHERE `idproduto` = $idproduto";
-                    mysqli_query($this->SQL, $queryUpdateEstoque) or die(mysqli_error($this->SQL));
-
-                    // Verifica o estoque após a atualização
-                    $this->verificarEstoque($idproduto);
-                }
-
-                // Insere a cesta vendida associada à venda com a quantidade
                 $cestas->InsertCestaVendida($idCesta, $idVenda, $data_venda, $quantidade);
             }
 
@@ -187,30 +200,35 @@ class Vendas extends Connect
     
         if ($produto = mysqli_fetch_assoc($result)) {
             if ($produto['quantidade'] <= $produto['quantidade_minima']) {
-                // Adicione a lógica de notificação aqui, exemplo:
+                
                 $_SESSION['notificacoes'][] = "O produto " . $produto['nome'] . " está com estoque baixo. Apenas " . $produto['quantidade'] . " unidades restantes.";
             }
         }
     }
 
-    public function quantidadeEstoque($idCesta)
+    public function quantidadeEstoque($idCesta, $quantidadeCesta)
     {
-        // Seleciona os produtos e quantidades necessários para a cesta
-        $query = "SELECT p.idproduto, p.quantidade, chp.quantidade AS quantidadeNecessaria
-                  FROM produto p
-                  JOIN cestabasica_has_produto chp ON p.idproduto = chp.produto_idproduto
-                  WHERE chp.cestaBasica_idcestaBasica = $idCesta";
+        $produtosInsuficientes = [];
+
+        $query = "SELECT p.idproduto, p.nome, p.quantidade, chp.quantidade AS quantidadeNecessaria
+                FROM produto p
+                JOIN cestabasica_has_produto chp ON p.idproduto = chp.produto_idproduto
+                WHERE chp.cestaBasica_idcestaBasica = $idCesta";
         $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 
-        // Verifica cada produto para garantir que há estoque suficiente
         while ($produto = mysqli_fetch_assoc($result)) {
-            if ($produto['quantidade'] < $produto['quantidadeNecessaria']) {
-                // Se o estoque for insuficiente, retorna falso
-                return false;
+            $quantidadeTotalNecessaria = $produto['quantidadeNecessaria'] * $quantidadeCesta;
+            if ($produto['quantidade'] < $quantidadeTotalNecessaria) {
+                $produtosInsuficientes[] = [
+                    'idproduto' => $produto['idproduto'],
+                    'nome' => $produto['nome'],
+                    'estoqueAtual' => $produto['quantidade'],
+                    'necessario' => $quantidadeTotalNecessaria
+                ];
             }
         }
-        // Se todos os produtos têm estoque suficiente, retorna verdadeiro
-        return true;
+
+        return $produtosInsuficientes;
     }
     
 
@@ -229,40 +247,96 @@ class Vendas extends Connect
 
     public function cancelarVenda($idvenda)
     {
-        // Verifica se a venda está marcada como pública (ativa)
         $query = "SELECT * FROM `venda` WHERE `idvenda` = '$idvenda' AND `public` = 1";
         $result = mysqli_query($this->SQL, $query);
 
         if (mysqli_num_rows($result) > 0) {
-            // Seleciona os produtos da venda e suas quantidades
+            
             $queryProdutos = "SELECT chp.produto_idproduto, chp.quantidade, cv.quantidade AS quantidadeVendida
                             FROM `cestabasica_has_produto` chp
                             JOIN `cestabasica_has_venda` cv ON chp.cestaBasica_idcestaBasica = cv.cestaBasica_idcestaBasica
                             WHERE cv.venda_idvenda = '$idvenda'";
             $resultProdutos = mysqli_query($this->SQL, $queryProdutos);
 
-            // Itera sobre os produtos vendidos e adiciona as quantidades de volta ao estoque
+            
             while ($produto = mysqli_fetch_assoc($resultProdutos)) {
                 $idproduto = $produto['produto_idproduto'];
                 $quantidadeParaAdicionar = $produto['quantidade'] * $produto['quantidadeVendida'];
 
-                // Atualiza a quantidade do produto no estoque
+                
                 $queryUpdateEstoque = "UPDATE `produto` SET `quantidade` = `quantidade` + $quantidadeParaAdicionar 
                                     WHERE `idproduto` = $idproduto";
                 mysqli_query($this->SQL, $queryUpdateEstoque) or die(mysqli_error($this->SQL));
             }
 
-            // Marca a venda como cancelada, tornando-a invisível (public = 0)
+           
             $queryCancelarVenda = "UPDATE `venda` SET `public` = 0 WHERE `idvenda` = '$idvenda'";
             mysqli_query($this->SQL, $queryCancelarVenda) or die(mysqli_error($this->SQL));
 
-            // Redireciona com mensagem de sucesso
+            
             header('Location: ../../views/vendas/index.php?alert=venda_cancelada');
         } else {
-            // Venda já foi cancelada ou não existe
+            
             header('Location: ../../views/vendas/index.php?alert=erro_cancelamento');
         }
     }
+
+    public function getRelatorioVendas() {
+        $query = "SELECT 
+                    v.idvenda, 
+                    v.valorTotal, 
+                    v.dataVenda, 
+                    cli.nome AS nome_cliente, 
+                    cli.telefone AS telefone_cliente,
+                    u.nomeUsuario AS nome_vendedor,
+                    GROUP_CONCAT(c.nome SEPARATOR ', ') AS itensVendidos,
+                    GROUP_CONCAT(cv.quantidade SEPARATOR ', ') AS quantidadeVendida
+                  FROM `venda` v 
+                  JOIN `cliente` cli ON v.cliente_idcliente = cli.idcliente
+                  JOIN `usuario_has_venda` uv ON v.idvenda = uv.venda_idvenda
+                  JOIN `usuario` u ON uv.usuario_idusuario = u.idusuario
+                  JOIN `cestaBasica_has_venda` cv ON v.idvenda = cv.venda_idvenda
+                  JOIN `cestaBasica` c ON cv.cestaBasica_idcestaBasica = c.idcestaBasica
+                  WHERE v.public = 1
+                  GROUP BY v.idvenda
+                  ORDER BY v.dataVenda DESC";
+        
+        $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+        return $result;
+    }
+    
+    
+    public function getRelatorioFinanceiro() {
+        // 1. Consulta para obter o total das vendas realizadas
+        $queryVendas = "
+            SELECT 
+                SUM(v.valorTotal) AS total_vendas 
+            FROM venda v 
+            WHERE v.public = 1";
+        $resultVendas = mysqli_query($this->SQL, $queryVendas);
+        $totalVendas = mysqli_fetch_assoc($resultVendas)['total_vendas'];
+    
+        // 2. Consulta para obter o custo total dos produtos utilizados nas cestas vendidas
+        $queryCustoProdutos = "
+            SELECT 
+                SUM(p.valor * chp.quantidade * cv.quantidade) AS custo_total
+            FROM cestabasica_has_venda cv
+            JOIN cestabasica_has_produto chp ON cv.cestaBasica_idcestaBasica = chp.cestaBasica_idcestaBasica
+            JOIN produto p ON chp.produto_idproduto = p.idproduto
+            WHERE cv.venda_idvenda IN (SELECT idvenda FROM venda WHERE public = 1)";
+        $resultCustoProdutos = mysqli_query($this->SQL, $queryCustoProdutos);
+        $custoTotal = mysqli_fetch_assoc($resultCustoProdutos)['custo_total'];
+    
+        // 3. Calcular o lucro
+        $lucro = $totalVendas - $custoTotal;
+    
+        return [
+            'total_vendas' => $totalVendas,
+            'custo_total' => $custoTotal,
+            'lucro' => $lucro
+        ];
+    }
+    
 
     public function deleteVenda($idvenda)
     {

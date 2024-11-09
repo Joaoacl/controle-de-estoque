@@ -200,7 +200,7 @@
       }
   
       // Redireciona para a página de visualização das cestas
-      header('Location: ../../views/cestabasica/index.php?alert=1');
+      header('Location: ../../views/cestabasica/index.php?alert=update_sucesso');
   }
 
   public function InsertCestaVendida($idCesta, $idvenda, $data_venda, $quantidade)
@@ -208,7 +208,7 @@
       $query = "INSERT INTO `cestabasica_has_venda`(`cestaBasica_idcestaBasica`, `venda_idvenda`, `quantidade`, `dataVenda`) VALUES ('$idCesta','$idvenda', '$quantidade', '$data_venda')";
         if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
 
-          header('Location: ../../views/vendas/index.php?alert=1');
+          header('Location: ../../views/vendas/index.php?alert=sucesso');
         }else{
           header('Location: ../../views/vendas/index.php?alert=0');
         }
@@ -225,12 +225,35 @@
 
     if ($result) {
         // Item deletado com sucesso
-        header('Location: ../../views/cestabasica/index.php?alert=1');
+        header('Location: ../../views/cestabasica/index.php?alert=deletado');
     } else {
         // Falha ao deletar item
         header('Location: ../../views/cestabasica/index.php?alert=0');
     }
   }
+
+
+  public function getRelatorioCestas() {
+    $query = "SELECT 
+                c.idcestaBasica, 
+                c.nome AS nome_cesta, 
+                c.descricao, 
+                c.valor, 
+                c.ativo, 
+                cat.nome AS nome_categoria,
+                GROUP_CONCAT(p.nome SEPARATOR ', ') AS itensCesta,
+                GROUP_CONCAT(cbp.quantidade SEPARATOR ', ') AS quantidades
+              FROM cestabasica c
+              JOIN categoriaCesta cat ON c.categoriaCesta_idcategoriaCesta = cat.idcategoriaCesta
+              JOIN cestabasica_has_produto cbp ON c.idcestaBasica = cbp.cestaBasica_idcestaBasica
+              JOIN produto p ON cbp.produto_idproduto = p.idproduto
+              WHERE c.public = 1
+              GROUP BY c.idcestaBasica";
+    
+    $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+    return $result;
+  }
+
 
   public function cestasAtivo($value, $idcestaBasica)
   {

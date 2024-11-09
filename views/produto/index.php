@@ -31,7 +31,10 @@ echo '<div class="content-wrapper">
 
               <h3 class="box-title">Lista de Produtos</h3>
 
-              
+               <!-- Botão para acessar o relatório de produtos -->
+              <a href="'.$url.'produto/relatorio_produtos.php" class="btn btn-info pull-right">
+                <i class="fa fa-file"></i> Relatório de Produtos
+              </a>
             </div>
             <!-- /.box-header -->
             <div class="box-body">

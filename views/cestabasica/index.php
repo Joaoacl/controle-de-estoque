@@ -31,7 +31,10 @@ echo '<div class="content-wrapper">
 
               <h3 class="box-title">Lista de Cestas Básicas</h3>
 
-              
+               <!-- Botão para acessar o relatório de cestas -->
+              <a href="'.$url.'cestabasica/relatorio_cestas.php" class="btn btn-info pull-right">
+                <i class="fa fa-file"></i> Relatório de Cestas
+              </a>
             </div>
             <!-- /.box-header -->
             <div class="box-body">

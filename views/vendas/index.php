@@ -31,6 +31,10 @@ echo '<div class="content-wrapper">
 
               <h3 class="box-title">Lista de Vendas</h3>
 
+               <!-- Botão para acessar o relatório de vendas -->
+              <a href="'.$url.'vendas/relatorio_vendas.php" class="btn btn-info pull-right">
+                <i class="fa fa-file"></i> Relatório de Vendas
+              </a>
       
             </div>
             <!-- /.box-header -->
@@ -70,6 +74,8 @@ echo '<div class="content-wrapper">
               <form action="index.php" method="post">
               <button name="public" type="submit" value="'.$public.'" class="btn '.$btn_color.' pull-left"><i class="fa '.$icon.'"></i> '.$button_name.'</button>
               </form>
+
+             
             </div>
           </div>
 ';

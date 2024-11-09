@@ -59,13 +59,13 @@
                           <div class="modal-dialog" role="document">
                               <div class="modal-content">
                                   <div class="modal-header">
-                                      <h5 class="modal-title" id="deleteModalLabel' . $row['idfornecedor'] . '">Excluir Usuário</h5>
+                                      <h5 class="modal-title" id="deleteModalLabel' . $row['idfornecedor'] . '">Excluir Fornecedor</h5>
                                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                           <span aria-hidden="true">&times;</span>
                                       </button>
                                   </div>
                                   <div class="modal-body">
-                                      Você tem certeza que deseja excluir o usuário <strong>' . $row['nome'] . '</strong>?
+                                      Você tem certeza que deseja excluir o fornecedor <strong>' . $row['nome'] . '</strong>?
                                   </div>
                                   <div class="modal-footer">
                                       <form action="../../App/Database/delfornecedor.php" method="POST">

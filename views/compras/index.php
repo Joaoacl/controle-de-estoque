@@ -22,6 +22,7 @@ echo '<div class="content-wrapper">
     <section class="content">
     ';
     require '../../layout/alert.php';
+    
     echo '
       <!-- Small boxes (Stat box) -->
       <div class="row">
@@ -31,6 +32,10 @@ echo '<div class="content-wrapper">
 
               <h3 class="box-title">Lista de Solicitações de Compra</h3>
 
+             <!-- Botão para acessar o relatório de compras -->
+              <a href="'.$url.'compras/relatorio_compras.php" class="btn btn-info pull-right">
+                <i class="fa fa-file"></i> Relatório de Vendas
+              </a>
           
             </div>
             <!-- /.box-header -->
