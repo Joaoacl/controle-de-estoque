@@ -4,9 +4,11 @@ require_once '../auth.php';
 require_once '../Models/usuario.class.php';
 require_once '../Models/enderecos.class.php';
 require_once '../Models/connect.php';
+require_once '../Models/log.class.php';
 
 $enderecos = new Enderecos();
 $connect = new Connect();
+$log = new Log();
 
 $idusuario = $_POST['idusuario'] ?? null;
 $isEditing = !empty($idusuario);
@@ -14,6 +16,8 @@ $isEditing = !empty($idusuario);
 
 $_SESSION['erros'] = [];
 $_SESSION['form_data'] = $_POST; 
+
+$usuarioLogado = $_SESSION['username'] ?? null;
 
 function emailJaExiste($email, $conexao, $idusuario = null) {
    
@@ -42,7 +46,7 @@ function cpfJaExiste($cpf, $conexao, $idusuario = null) {
 }
 
 if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
-    $username = $_POST['username'];
+    $nomeusuario = $_POST['nomeusuario'];
     $cpf = $_POST['cpf'];
     $salario = $_POST['salario'];
     $cargo = $_POST['cargo'];
@@ -52,6 +56,7 @@ if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
     $permissao = $_POST['permissao'];
     $ativo = $_POST['ativo'];
     $arquivo = $_FILES['arquivo'] ?? null;
+
     
     $rua = $_POST['rua'];
     $numero = $_POST['numero'];
@@ -59,6 +64,7 @@ if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
     $cidade = $_POST['cidade'];
     $estado = $_POST['estado'];
     $cep = $_POST['cep'];
+
 
     if (emailJaExiste($email, $connect, $idusuario)) {
         $_SESSION['erros']['email'] = "O email já existe no sistema.";
@@ -102,7 +108,14 @@ if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
         $enderecos->updateEndereco($rua, $numero, $bairro, $cidade, $estado, $cep, $idendereco);
 
         // Atualizar usuário
-        $usuario->UpdateUsuario($idusuario, $username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $nomeimagem, $ativo);
+        $usuario->UpdateUsuario($idusuario, $nomeusuario, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $nomeimagem, $ativo);
+
+        $log->registrar(
+            'usuario',
+            $username,
+            'atualização',
+            'Usuário ID: ' . $idusuario . ' (' . $nomeusuario . ') atualizado com sucesso.'
+        );
 
         $_SESSION['sucesso'] = "Usuário atualizado com sucesso!";
     } else {
@@ -110,7 +123,15 @@ if (isset($_POST['upload']) && $_POST['upload'] === 'Cadastrar') {
         $enderecoId = $enderecos->InsertEndereco($rua, $numero, $bairro, $cidade, $estado, $cep);
         if ($enderecoId) {
             // Inserir novo usuário com o ID do endereço
-            $usuario->InsertUsuario($username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $enderecoId, $nomeimagem);
+            $usuario->InsertUsuario($nomeusuario, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $enderecoId, $nomeimagem);
+
+            $log->registrar(
+                'usuario',
+                $username,
+                'criação',
+                'Usuário ' . $nomeusuario . ' criado com sucesso.'
+            );
+            
             $_SESSION['sucesso'] = "Usuário cadastrado com sucesso!";
         } else {
             $_SESSION['erros']['endereco'] = "Erro ao inserir endereço.";

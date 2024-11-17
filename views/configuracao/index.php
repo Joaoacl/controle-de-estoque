@@ -23,16 +23,15 @@ echo '<section class="content-header">
 echo '<section class="content">
         <div class="row">';
 
-    if($perm == 1){
-
             echo'<div class="col-md-6">
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title">Configurar Desconto Máximo</h3>
                     </div>
                     <form method="POST">
-                        <div class="box-body">
-                            <div class="form-group">
+                        <div class="box-body">';
+                        if($perm == 1){
+                            echo'<div class="form-group">
                                 <label for="max_desconto">Desconto Máximo (%)</label>
                                 <input type="number" name="max_desconto" class="form-control" id="max_desconto" 
                                        value="' . htmlspecialchars($maxDesconto) . '" min="0" max="100" required>

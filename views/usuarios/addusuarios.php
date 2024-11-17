@@ -60,7 +60,7 @@ echo '
               <div class="box-body">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Nome do Usuário *</label>
-                  <input type="text" name="username" class="form-control" id="exampleInputEmail1" placeholder="Nome do Usuário" maxlength="45" value="' .htmlspecialchars($formData['username'] ?? '').'" required>
+                  <input type="text" name="nomeusuario" class="form-control" id="nomeusuario" placeholder="Nome do Usuário" maxlength="45" value="' .htmlspecialchars($formData['nomeusuario'] ?? '').'" required>
           
 
                 <label class="'.$label_cpf.'" for="exampleInputEmail1">CPF *</label>

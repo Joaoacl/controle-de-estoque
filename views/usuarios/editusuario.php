@@ -67,7 +67,7 @@ echo'
                   <input type="text" name="username" class="form-control" id="username" placeholder="Nome" value="' . $resp['Usuario']['idusuario'] . '" maxlength="45" disabled>
 
                   <label for="username">Nome do Usuário *</label>
-                  <input type="text" name="username" class="form-control" id="username" placeholder="Nome" value="' . $resp['Usuario']['nomeUsuario'] . '" maxlength="45" required>
+                  <input type="text" name="nomeusuario" class="form-control" id="nomeusuario" placeholder="Nome" value="' . $resp['Usuario']['nomeUsuario'] . '" maxlength="45" required>
 
                   <label class="'.$label_cpf.'" for="cpf">CPF *</label>
                   <input type="text" name="cpf" class="form-control" id="cpf" placeholder="CPF" value="' . $resp['Usuario']['cpf'] . '" maxlength="14" oninput="aplicarMascaraCPF(this)" required>
@@ -181,9 +181,6 @@ echo $javascript;
 </style>
 
 <script>
-
-  
-    
 
     // Máscara para telefone no formato (99) 99999-9999
     function aplicarMascaraTelefone(input) {

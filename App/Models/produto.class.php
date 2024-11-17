@@ -12,15 +12,15 @@ class Produtos extends Connect
  	
     public function index($value)
     {
-        // Vamos definir um valor padrão para o início e o limite
+        
         $inicio = isset($_GET['inicio']) ? (int) $_GET['inicio'] : 0;
-        $limite = isset($_GET['limite']) ? (int) $_GET['limite'] : 15;
+        $limite = isset($_GET['limite']) ? (int) $_GET['limite'] : 10;
 
-        // Chamando a função de listar com paginação
+       
         $this->listarComPaginacao($value, $inicio, $limite);
     }
 
-    // Função de listar com paginação
+    
     public function listarComPaginacao($value, $inicio, $limite)
     {
         $query = "SELECT * FROM `produto` WHERE `public` = 1 AND `ativo` = '$value' LIMIT $inicio, $limite";
@@ -93,7 +93,7 @@ class Produtos extends Connect
         }
     }
 
-    // Método para contar o número total de produtos
+   
     public function contarTotalProdutos($value) {
         $query = "SELECT COUNT(*) as total FROM `produto` WHERE `public` = 1 AND `ativo` = '$value'";
         $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
@@ -101,7 +101,7 @@ class Produtos extends Connect
         return $row['total'];
     }
 
-    // Método para renderizar os controles de paginação
+    
     public function renderizarControlesPaginacao($value, $inicio, $limite) {
         $totalProdutos = $this->contarTotalProdutos($value);
         $totalPaginas = ceil($totalProdutos / $limite);
@@ -153,12 +153,12 @@ class Produtos extends Connect
         echo '<tbody>';
 
         while ($row = mysqli_fetch_array($result)) {
-            // Verificar se o produto está na cesta (caso seja edição)
+          
             $checked = array_key_exists($row['idproduto'], $produtosSelecionados) ? "checked" : "";
             $quantidade = $checked ? $produtosSelecionados[$row['idproduto']] : 1;
 
           
-            // Supondo que você esteja em um loop para listar produtos
+          
             echo '<tr>';
             echo '<td><input class="form-check-input" type="checkbox" name="produtos[]" value="'.$row['idproduto'].'" onchange="verificarSelecionados()" '.$checked.'></td>';
             echo '<td><label class="form-check-label">'.$row['nome'].'</label></td>';
@@ -184,7 +184,7 @@ class Produtos extends Connect
     $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 
     while ($row = mysqli_fetch_assoc($result)) {
-        $produtos[$row['produto_idproduto']] = $row['quantidade']; // Adiciona o ID do produto como chave e a quantidade como valor
+        $produtos[$row['produto_idproduto']] = $row['quantidade']; 
     }
 
     return $produtos; 
@@ -228,12 +228,12 @@ class Produtos extends Connect
 		$query = "UPDATE `produto` SET `nome` = '$nomeProduto', `valor` = '$valor', `quantidade` = '$quantidade', `descricao` = '$descricao', `quantidade_minima` = '$quantidade_minima', `ativo` = '$ativo' WHERE `idproduto` = '$idproduto'";
     	$result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
 
-    if ($result) {
-        $this->verificarEstoque($idproduto);
-        header('Location: ../../views/produto/index.php?alert=update_sucesso');
-    } else {
-        header('Location: ../../views/produto/index.php?alert=0');
-    }
+        if ($result) {
+            $this->verificarEstoque($idproduto);
+            header('Location: ../../views/produto/index.php?alert=update_sucesso');
+        } else {
+            header('Location: ../../views/produto/index.php?alert=0');
+        }
 	}
 
     public function verificarEstoque($idproduto) {
@@ -292,6 +292,13 @@ class Produtos extends Connect
         
         $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
         return $result;
+    }
+
+    public function getNomeProduto($idproduto) {
+        $query = "SELECT nome FROM produto WHERE idproduto = '$idproduto'";
+        $result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL));
+        $row = mysqli_fetch_assoc($result);
+        return $row['nome'] ?? 'Desconhecido';
     }
     
 

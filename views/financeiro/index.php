@@ -7,9 +7,9 @@ echo $head;
 echo $header;
 echo $aside;
 
-// Verificar se o usuário tem permissão de administrador (perm == 1)
+
 if ($perm != 1) {
-    // Exibir mensagem de acesso negado e encerrar o script
+    
     echo '
     <div class="content-wrapper">
         <section class="content-header">
@@ -58,6 +58,9 @@ $dadosFinanceiros = $vendas->getRelatorioFinanceiro();
                         </tr>
                     </tbody>
                 </table>
+
+                <!-- Canvas para o Gráfico -->
+                <canvas id="relatorioFinanceiroGrafico" width="400" height="200"></canvas>
             </div>
         </div>
     </section>
@@ -66,3 +69,48 @@ $dadosFinanceiros = $vendas->getRelatorioFinanceiro();
 echo $footer;
 echo $javascript;
 ?>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const totalVendas = <?php echo json_encode($dadosFinanceiros['total_vendas']); ?>;
+    const custoTotal = <?php echo json_encode($dadosFinanceiros['custo_total']); ?>;
+    const lucro = <?php echo json_encode($dadosFinanceiros['lucro']); ?>;
+
+    
+    const ctx = document.getElementById('relatorioFinanceiroGrafico').getContext('2d');
+    const relatorioFinanceiroGrafico = new Chart(ctx, {
+        type: 'bar', 
+        data: {
+            labels: ['Total de Vendas', 'Custo Total', 'Lucro'],
+            datasets: [{
+                label: 'Valores (R$)',
+                data: [totalVendas, custoTotal, lucro], 
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.6)', 
+                    'rgba(255, 99, 132, 0.6)', 
+                    'rgba(75, 192, 192, 0.6)'   
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true 
+                }
+            },
+            responsive: true, 
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        }
+    });
+</script>

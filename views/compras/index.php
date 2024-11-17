@@ -34,7 +34,7 @@ echo '<div class="content-wrapper">
 
              <!-- Botão para acessar o relatório de compras -->
               <a href="'.$url.'compras/relatorio_compras.php" class="btn btn-info pull-right">
-                <i class="fa fa-file"></i> Relatório de Vendas
+                <i class="fa fa-file"></i> Relatório de Compras
               </a>
           
             </div>

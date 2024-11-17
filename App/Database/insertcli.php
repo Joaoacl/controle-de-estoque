@@ -2,8 +2,10 @@
 require_once '../auth.php';
 require_once '../Models/cliente.class.php';
 require_once '../Models/enderecos.class.php';
+require_once '../Models/log.class.php';
 
 $enderecos = new Enderecos();
+$log = new Log();
 
 if(isset($_POST['upload']) == 'Cadastrar'){
 
@@ -44,11 +46,25 @@ if ($nome != NULL) {
                     // Atualizar usuário
                     $clientes->UpdateCliente($idcliente, $nome, $cpf, $desconto, $email, $telefone, $ativo);
 
+                    $log->registrar(
+                        'clientes',
+                        $username,
+                        'atualização',
+                        "Cliente ID: $idcliente atualizado - Nome: $nome, CPF: $cpf"
+                    );
+
                     header('Location: ../../views/clientes/index.php?alert=update_sucesso'); // Sucesso no update
     } else {
         $enderecoId = $enderecos->InsertEndereco($rua, $numero, $bairro, $cidade, $estado, $cep);
         if ($enderecoId) {
             $clientes->InsertCliente($nome, $cpf, $desconto, $email, $telefone, $enderecoId);
+
+            $log->registrar(
+                'clientes',
+                $username,
+                'criação',
+                "Cliente ID: $clienteId criado - Nome: $nome, CPF: $cpf"
+            );
         } else {
             header('Location: ../../views/clientes/index.php?alert=erro_endereco'); // Erro ao inserir endereço
         }

@@ -87,10 +87,10 @@
     }
     
 
- 	public function InsertUsuario($username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $enderecoId, $pt_file){
+ 	public function InsertUsuario($nomeusuario, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $enderecoId, $pt_file){
 
  		$query = "INSERT INTO usuario (`nomeUsuario`, `cpf`, `salario`, `cargo`, `email`, `senha`, `telefone`, `permissao`, `endereco_idendereco`, `ativo`, `imagem`)
-            VALUES ('$username', '$cpf', '$salario', '$cargo', '$email', '$senha', '$telefone', '$permissao', '$enderecoId', '1', '$pt_file')";
+            VALUES ('$nomeusuario', '$cpf', '$salario', '$cargo', '$email', '$senha', '$telefone', '$permissao', '$enderecoId', '1', '$pt_file')";
  		if($result = mysqli_query($this->SQL, $query) or die(mysqli_error($this->SQL))){
 
  			header('Location: ../../views/usuarios/index.php?alert=1');
@@ -173,7 +173,7 @@
         }
     }
 
-    public function UpdateUsuario($idusuario, $username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $nomeimagem, $ativo)
+    public function UpdateUsuario($idusuario, $nomeusuario, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $nomeimagem, $ativo)
     {
         // Prepara a query de atualização
         $query = "UPDATE usuario SET 
@@ -198,7 +198,7 @@
         }
 
         // Associa os parâmetros à query
-        $stmt->bind_param("ssssssssssi", $username, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $nomeimagem, $ativo, $idusuario);
+        $stmt->bind_param("ssssssssssi", $nomeusuario, $cpf, $salario, $cargo, $email, $senha, $telefone, $permissao, $nomeimagem, $ativo, $idusuario);
 
         // Executa a query
         if ($stmt->execute()) {
@@ -228,7 +228,20 @@
         }
     }
 
-  
+    public function getNomeUsuario($idusuario) {
+        $query = "SELECT nomeUsuario FROM usuario WHERE idusuario = ?";
+        $stmt = $this->SQL->prepare($query);
+        $stmt->bind_param("i", $idusuario);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($row = $result->fetch_assoc()) {
+            return $row['nomeUsuario'];
+        }
+        return null;
+    }
+    
+    
 
  }
 

@@ -247,6 +247,18 @@ $aside = '<aside class="main-sidebar">
           </ul>
         </li>
 
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-bars"></i> <span>Logs</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="'.$url.'logs/relatorio_logs.php"><i class="fa fa-server"></i> Relatório de logs</a></li>
+          </ul>
+        </li>
+
       </ul>
     </section>
     <!-- /.sidebar -->
